@@ -7,18 +7,18 @@ public class CellCommands {
 
 	// Sends command to specific method
 	public static void determineCommand(String com) {
-		// converts to Upper Case to handle user errors
-		String comUpperCase = com.toUpperCase();
 		
-		if (comUpperCase.indexOf("CLEAR") != -1) {
-			clearCell(comUpperCase);
-		} else if (comUpperCase.indexOf("SORT") != -1) {
-			sort(comUpperCase);
-		} else if (comUpperCase.indexOf("IMPORT") != -1) {
-			String location = comUpperCase.substring(com.indexOf("IMPORT") + 7).trim();
+		if (com.toUpperCase().indexOf("CLEAR") != -1) {
+			clearCell(com.toUpperCase());
+		} else if (com.toUpperCase().indexOf("SORT") != -1) {
+			sort(com.toUpperCase());
+		} else if (com.toUpperCase().indexOf("IMPORT") != -1) {
+			int startidx = com.toUpperCase().indexOf("IMPORT") + 7;
+			String location = com.substring(startidx).trim();
 			importFile(location);
-		} else if (comUpperCase.indexOf("EXPORT") != -1) {
-			String location = comUpperCase.substring(com.indexOf("EXPORT") + 7).trim();
+		} else if (com.toUpperCase().indexOf("EXPORT") != -1) {
+			int startidx = com.indexOf("EXPORT") + 7;
+			String location = com.substring(startidx).trim();
 			exportFile(location);
 		} else {
 			// must send normal command with unmodified data
@@ -172,15 +172,20 @@ public class CellCommands {
 			//Prints Cell address, data, and display type to be retrieved upon import
 			for (int i = 0; i < PrintCells.rows; i++) {
 				for (int k = 0; k < PrintCells.columns; k++) {
-					p.print(CellData.spreadSheet[i][k].address + ":" + CellData.spreadSheet[i][k].toString());
+					p.print(CellData.spreadSheet[i][k].address + ":"); // + CellData.spreadSheet[i][k].toString());
+					if (CellData.spreadSheet[i][k].displayContent == 4) {
+						p.print(CellData.spreadSheet[i][k].formula.originalFormula);
+					} else {
+						p.print(CellData.spreadSheet[i][k].toString());
+					}
 					p.println("," + CellData.spreadSheet[i][k].displayContent);
 				}
 			}
-		} catch (FileNotFoundException e) {
+			p.close();
+		} catch (Exception e) {
 			// If location is invalid
-			System.out.println("Can't export file, location is invalid");
+			Main.Error_Message = "Can't export file, location is invalid";
 		} 
-		p.close();
 
 	}
 
@@ -196,33 +201,70 @@ public class CellCommands {
 			// Converts each line into specified data in each Cell of spreadSheet
 			while (s.hasNextLine()) {
 				String lineConversion = s.nextLine();
-				
 				// determines address of Cell
-				int column = lineConversion.charAt(0) - 65;
-				int row = Integer.parseInt(lineConversion.substring(1, lineConversion.indexOf(':')))-1;
+				boolean isValid = true;
 				
-				// creates variables of data to be sent to setCell method in Cell object later
-				String data = lineConversion.substring(lineConversion.indexOf(':') + 1, lineConversion.indexOf(','));
-				int dataType = Integer.parseInt(lineConversion.substring(lineConversion.lastIndexOf(',') + 1).trim());
-				CellData.spreadSheet[row][column].setCell(data, dataType);
+				if (lineConversion.length() < 5) {
+					isValid = false;
+				} else if (lineConversion.indexOf(':') != 2) {
+					isValid = false;
+				}
+				
+				if (isValid) {
+					int column = lineConversion.charAt(0) - 65;
+					int row = Integer.parseInt(lineConversion.substring(1, lineConversion.indexOf(':')))-1;
+				
+					// creates variables of data to be sent to setCell method in Cell object later
+					String data = lineConversion.substring(lineConversion.indexOf(':') + 1, lineConversion.indexOf(','));
+				
+					int dataType = Integer.parseInt(lineConversion.substring(lineConversion.lastIndexOf(',') + 1).trim());
+					if (dataType >=1 && dataType <= 4) {
+						CellData.spreadSheet[row][column].setCell(data, dataType);
+					} else {
+						System.out.println("ERROR: Cell is corrupted, Program will malfunction");
+					}
+				} else {
+					System.out.println("ERROR:Data is Corrupt, Program will malfunction");
+				}
 			}
 		} catch (FileNotFoundException e) {
 			// if file can't be found
-			System.out.println("ERROR: file not found");
+			Main.Error_Message = "file not found";
+		}
+	}
+	
+	public static void autoLoad(String location) {
+		File f = new File(location);
+		Scanner s;
+		try {
+			s = new Scanner(f);
+			while (s.hasNextLine()) {
+				String Command = s.nextLine();
+				System.out.println("Command:" + Command);
+				Main.commandProcessing(Command);
+				System.out.println();
+			}
+		} catch (FileNotFoundException e) {
+			// if file can't be found
+			Main.Error_Message = "file not found";
 		}
 	}
 	
 	public static void setCellCommand(String com) {
-		// Determines address of Cell
-		int row = com.charAt(0) - 65;
-		int column = com.charAt(1) - 49;
+		try {
+			// Determines address of Cell
+			int row = com.charAt(0) - 65;
+			int column = com.charAt(1) - 49;
 
-		// Determines data to send to specific Cell
-		String data = com.substring(com.indexOf("=") + 1).trim();
-		int displayType = inputDataType(data);
+			// Determines data to send to specific Cell
+			String data = com.substring(com.indexOf("=") + 1).trim();
+			int displayType = inputDataType(data);
 		
-		// Asigns data and displayType
-		CellData.spreadSheet[column][row].setCell(data, displayType);
+			// Asigns data and displayType
+			CellData.spreadSheet[column][row].setCell(data, displayType);
+		} catch (Exception e){
+			Main.Error_Message = "The set cell input format was wrong, \nrefer to the README.txt";
+		}
 	}
 
 	public static int inputDataType(String data) {
