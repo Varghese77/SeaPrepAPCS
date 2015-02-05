@@ -54,6 +54,7 @@ public class CellCommands {
 		String range = com.substring(com.indexOf("SORT") + 5).trim();
 		
 		// gets dimensions of box to sort from range
+		// FIX THIS FOR DOUBLE DIGITS
 		int rangeWidth = range.charAt(range.indexOf('-') + 1) - range.charAt(0) + 1;
 		int rangeHeight = Integer.parseInt(range.substring(range.indexOf('-') + 2))
 		- Integer.parseInt(range.substring(1, range.indexOf('-'))) + 1;
@@ -194,19 +195,22 @@ public class CellCommands {
 		Scanner s;
 		try {
 			s = new Scanner(f);
+			boolean isValid = true;
+			try {
 			String dimensions = s.nextLine();
 			// Sends dimensions to create new Cell Array
 			Main.spreadSheetMeta(dimensions);
-			
+			} catch (StringIndexOutOfBoundsException e) {
+				isValid = false;
+			}
 			// Converts each line into specified data in each Cell of spreadSheet
 			while (s.hasNextLine()) {
 				String lineConversion = s.nextLine();
 				// determines address of Cell
-				boolean isValid = true;
 				
 				if (lineConversion.length() < 5) {
 					isValid = false;
-				} else if (lineConversion.indexOf(':') != 2) {
+				} else if (lineConversion.indexOf(':') != 2 && lineConversion.indexOf(':') != 3) {
 					isValid = false;
 				}
 				
@@ -224,8 +228,9 @@ public class CellCommands {
 						System.out.println("ERROR: Cell is corrupted, Program will malfunction");
 					}
 				} else {
-					System.out.println("ERROR:Data is Corrupt, Program will malfunction");
+					System.out.println("ERROR:Data is Corrupt, Program may malfunction");
 				}
+				
 			}
 		} catch (FileNotFoundException e) {
 			// if file can't be found

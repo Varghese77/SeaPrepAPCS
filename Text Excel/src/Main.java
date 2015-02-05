@@ -3,13 +3,16 @@ import java.util.Scanner;
 
 public class Main {
 	
+	// Error message String to be printed after each cycle
 	public static String Error_Message = "";
 	
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
+		
+		// handleDimensions() 
 		handleDimensions();
 		
-	System.out.println("Do you want to autoload commands from a document? Enter yes or no.");
+		System.out.println("Do you want to autoload commands from a document? Enter yes or no.");
 		String auto = scan.nextLine();
 		if (auto.toUpperCase().equals("YES")) {
 			System.out.print("File Location:");
@@ -75,7 +78,7 @@ public class Main {
 			for (int k = 0; k <= PrintCells.columns-1; k++) {
 				CellData.spreadSheet[i][k] = new Cell("       ", 1);
 				String addressLetter = (char) (k + 'A') + "";
-				String addressNumber = (char) (i + '1') + "";
+				int addressNumber = (i + 1);
 				//sets cell address field by location
 				CellData.spreadSheet[i][k].address = addressLetter + addressNumber;
 			}
