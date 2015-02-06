@@ -42,8 +42,9 @@ public class Cell {
 			date = new Date(s);
 			displayContent = 3;
 		} else {
-			formula = new Formula(s);
-			displayContent = 4;
+			String[] cellMeta = {address, s, displayInternalContent()};
+			formula = new Formula(cellMeta, displayContent);
+			//displayContent gets set in formula object
 		}
 	}
 	
@@ -59,4 +60,15 @@ public class Cell {
 		}
 	}
 
+	public String displayInternalContent() {
+		if (displayContent == 1) {
+			return text;
+		} else if (displayContent == 2) {
+			return number + "";
+		} else if (displayContent == 3){
+			return date.toString();
+		} else {
+			return formula.originalFormula;
+		}
+	}
 }

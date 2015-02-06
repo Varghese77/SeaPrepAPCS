@@ -3,15 +3,36 @@ public class Formula {
 
 	public String originalFormula = "no_formula_given";
 	
-	public Formula(String s) {
-		originalFormula = s;
+	public int previousCellType;
+	
+	public String previousCellData = "";
+	
+	public String previousCellAddress = ""; 
+	
+	public Formula(String[] cellMeta, int displayType) {
+		/* cellMeta[0] = Cell.address
+		 * cellMeta[1] = original command or s
+		 * cellMeta[2] = Cell.displayInternalContent()
+		 */
+		
+		previousCellAddress = cellMeta[0];
+		originalFormula = cellMeta[1];
+		previousCellData = cellMeta[2];
+		previousCellType = displayType;
+		
+		int column = previousCellAddress.charAt(0) - 65;
+		int row = previousCellAddress.charAt(1) - 49;
+		
+		CellData.spreadSheet[row][column].displayContent = 4;
+		
 	}
 	
 	public String toString() {
 		// creates array of expression parts
+		String noParenthesesFormula = originalFormula.substring(1, originalFormula.length()-1);
 		String[] parts;
 		try {
-			parts = originalFormula.split(" ");
+			parts = noParenthesesFormula.split(" ");
 		} catch (StringIndexOutOfBoundsException noInput) {
 			parts = new String[1];
 			parts[0] = "";
@@ -19,12 +40,37 @@ public class Formula {
 		
 		convertCellAddress(parts);
 		
+		if (!validateContents(parts)) {
+			terminateFormula(parts);
+		}
+		
 		mult_div(parts);
 		
 		add_sub(parts);
 		
-		return parts[0];
+		if (parts[0].length() == 0) {
+			int column = previousCellAddress.charAt(0) - 65;
+			int row = previousCellAddress.charAt(1) - 49;
+			
+			CellData.spreadSheet[row][column].setCell(previousCellData, previousCellType);
+			return CellData.spreadSheet[row][column].toString();
+			
+		} else {
+			return parts[0];
+		}
 		
+	}
+	
+	public static boolean validateContents(String[] parts){
+		boolean isValid = true;
+		for (int i = 0; i < parts.length; i += 2){
+			try {
+				Double.parseDouble(parts[i]);
+			} catch (NumberFormatException isNotNum) {
+				isValid = false;
+			}
+		}
+		return isValid;
 	}
 	
 	private static void convertCellAddress(String[] parts) {
@@ -164,7 +210,7 @@ public class Formula {
 	}
 	
 	public static void terminateFormula(String[] parts) {
-		Main.Error_Message = "Error: One part(s) of the formula isn't a number";
+		Main.Error_Message = "One part(s) of the formula isn't a number";
 		parts[0] = "";
 	}
 }

@@ -5,6 +5,8 @@ import java.io.PrintStream;
 
 public class CellCommands {
 
+	private static final Exception Exception = null;
+
 	// Sends command to specific method
 	public static void determineCommand(String com) {
 		
@@ -20,9 +22,14 @@ public class CellCommands {
 			int startidx = com.indexOf("EXPORT") + 7;
 			String location = com.substring(startidx).trim();
 			exportFile(location);
-		} else {
-			// must send normal command with unmodified data
+		} else  if (com.indexOf("=") != -1){
+			// Sends normal command with unmodified data
 			setCellCommand(com);
+		} else if (com.toUpperCase().indexOf("CELL ") != -1){
+			com = com.substring(5);
+			showCell(com);
+		} else {
+			Main.Error_Message = "Unable to determine command";
 		}
 	}
 
@@ -50,6 +57,7 @@ public class CellCommands {
 	}
 	
 	public static void sort(String com) {
+		try {
 		// determines range of box to sort numbers
 		String range = com.substring(com.indexOf("SORT") + 5).trim();
 		
@@ -104,6 +112,9 @@ public class CellCommands {
 		} else {
 			// Prints if some values in box were not doubles
 			System.out.println("Not all values in range were doubles");
+		}
+		} catch (Exception e) {
+			Main.Error_Message = "sort command does not compute \nrefere to the README.txt";
 		}
 	}
 
@@ -266,12 +277,22 @@ public class CellCommands {
 			int displayType = inputDataType(data);
 		
 			// Asigns data and displayType
-			CellData.spreadSheet[column][row].setCell(data, displayType);
-		} catch (Exception e){
+			if (displayType != 0) {
+				CellData.spreadSheet[column][row].setCell(data, displayType);
+			} else {
+				throw new Exception();
+			}	
+		} catch (Exception invalidCommand){
 			Main.Error_Message = "The set cell input format was wrong, \nrefer to the README.txt";
 		}
 	}
 
+	public static void showCell(String Address) {
+		int column = Address.charAt(0) - 65;
+		int row = Address.charAt(1) - 49;
+		System.out.println("Cell " + Address + ": " + CellData.spreadSheet[row][column].displayInternalContent());
+	}
+	
 	public static int inputDataType(String data) {
 		if (isString(data)) {
 			return 1;
@@ -279,8 +300,10 @@ public class CellCommands {
 			return 2;
 		} else if (isDate(data)) {
 			return 3;
-		} else {
+		} else if (isFormula(data)){
 			return 4;
+		} else {
+			return 0;
 		}
 	}
 
@@ -327,5 +350,18 @@ public class CellCommands {
 		}
 		return true;
 	}
+
+	public static boolean isFormula(String s){
+		if (s.length() < 2) {
+			return false;
+		}
+
+		if (s.charAt(0) == '(' && s.charAt(s.length() - 1) == ')') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 }
 
