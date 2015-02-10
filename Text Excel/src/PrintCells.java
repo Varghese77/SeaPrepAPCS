@@ -67,8 +67,10 @@ public class PrintCells {
 		
 		/* cuts off string if over 7 characters 
 		 * and/or fills in spaces to make cell have 
-		 * 7 characters total 
+		 * 7 characters total and returns 
+		 * constructed cell
 		 */
+		
 		if (stringLength == 7) {
 			return "|" + cellString;
 		} else if (stringLength < 7) {

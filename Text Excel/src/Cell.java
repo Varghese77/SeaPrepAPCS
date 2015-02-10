@@ -12,12 +12,17 @@ public class Cell {
 	
 	public Formula formula; 
 	
-	//determines what data to display
+	/*determines what data to display
+	 * 1 = String (default)
+	 * 2 = real number
+	 * 2 = Date
+	 * 4 = Formula
+	 */
+	
 	public int displayContent = 1;
 	
-	//constructor
+	//constructor 
 	public Cell(String s, int displayType) { 
-		
 		if (displayType == 1) {
 			text = s.substring(1, s.length()-1);
 			displayContent = 1;
@@ -42,6 +47,7 @@ public class Cell {
 			date = new Date(s);
 			displayContent = 3;
 		} else {
+			// Created bundle of information to be processed in Formula
 			String[] cellMeta = {address, s, displayInternalContent()};
 			formula = new Formula(cellMeta, displayContent);
 			//displayContent gets set in formula object
@@ -60,6 +66,7 @@ public class Cell {
 		}
 	}
 
+	// For cells to show original Formulas
 	public String displayInternalContent() {
 		if (displayContent == 1) {
 			return text;

@@ -15,7 +15,7 @@ public class Date {
 		day = Integer.parseInt(dateParts[1]);
 		year = Integer.parseInt(dateParts[1]);
 	}
-	
+
 	public String toString() {
 		return month + "/" + day + "/" + year;
 	}
