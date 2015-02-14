@@ -13,7 +13,7 @@ public class Main {
 
 		// Determines if program should auto-load commands
 		// from an imported document.
-
+		CellData.spreadSheetCopy = CellData.spreadSheet.clone();
 		System.out
 				.println("Do you want to autoload commands from a document? Enter yes or no.");
 		String auto = scan.nextLine();
@@ -58,6 +58,7 @@ public class Main {
 		} while (!command.equals("quit"));
 		scan.close();
 
+		System.out.println(CellData.spreadSheetCopy[0][0].number);
 	}
 
 	public static void handleDimensions() {

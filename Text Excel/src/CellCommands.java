@@ -5,8 +5,6 @@ import java.io.PrintStream;
 
 public class CellCommands {
 
-	private static final Exception Exception = null;
-
 	// Sends command to specific method
 	public static void determineCommand(String com) {
 		
@@ -24,11 +22,14 @@ public class CellCommands {
 			exportFile(location);
 		} else  if (com.indexOf("=") != -1){
 			// Sends normal command with unmodified data
-			setCellCommand(com);
+			setCellCommand(com, true);
 		} else if (com.toUpperCase().indexOf("CELL ") != -1){
-			com = com.substring(5);
+			com = com.substring(com.toUpperCase().indexOf("CELL ") + 4).trim();
 			showCell(com);
-		} else {
+		} else if (com.toUpperCase().indexOf("NEW DIMENSIONS") != -1) {
+			com = com.substring(com.toUpperCase().indexOf("NEW DIMENSIONS") + 14).trim();
+			createNewArray(com);
+		} else {	
 			Main.Error_Message = "Unable to determine command";
 		}
 	}
@@ -62,7 +63,7 @@ public class CellCommands {
 		String range = com.substring(com.indexOf("SORT") + 5).trim();
 		
 		// gets dimensions of box to sort from range
-		// FIX THIS FOR DOUBLE DIGITS
+		// FIX THIS FOR DOUBLE DIGITS!!!!!!!!!!!!!!!!!!!!!!!!
 		int rangeWidth = range.charAt(range.indexOf('-') + 1) - range.charAt(0) + 1;
 		int rangeHeight = Integer.parseInt(range.substring(range.indexOf('-') + 2))
 		- Integer.parseInt(range.substring(1, range.indexOf('-'))) + 1;
@@ -201,52 +202,111 @@ public class CellCommands {
 
 	}
 
-	public static void importFile(String location){
+	public static void importFile(String location) {
 		File f = new File(location);
 		Scanner s;
+		Scanner s2;
 		try {
+
 			s = new Scanner(f);
-			boolean isValid = true;
-			try {
-			String dimensions = s.nextLine();
-			// Sends dimensions to create new Cell Array
-			Main.spreadSheetMeta(dimensions);
-			} catch (StringIndexOutOfBoundsException e) {
-				isValid = false;
-			}
-			// Converts each line into specified data in each Cell of spreadSheet
-			while (s.hasNextLine()) {
-				String lineConversion = s.nextLine();
-				// determines address of Cell
-				
-				if (lineConversion.length() < 5) {
-					isValid = false;
-				} else if (lineConversion.indexOf(':') != 2 && lineConversion.indexOf(':') != 3) {
-					isValid = false;
-				}
-				
-				if (isValid) {
+			boolean isValid = checkImportedFile(s);
+
+			s2 = new Scanner(f);
+			if (isValid) {
+				// Sends dimensions to create new Cell Array
+				String dimensions = s2.nextLine();
+				Main.spreadSheetMeta(dimensions);
+
+				while (s2.hasNextLine()) {
+					String lineConversion = s2.nextLine();
+
 					int column = lineConversion.charAt(0) - 65;
-					int row = Integer.parseInt(lineConversion.substring(1, lineConversion.indexOf(':')))-1;
-				
-					// creates variables of data to be sent to setCell method in Cell object later
-					String data = lineConversion.substring(lineConversion.indexOf(':') + 1, lineConversion.indexOf(','));
-				
-					int dataType = Integer.parseInt(lineConversion.substring(lineConversion.lastIndexOf(',') + 1).trim());
-					if (dataType >=1 && dataType <= 4) {
-						CellData.spreadSheet[row][column].setCell(data, dataType);
-					} else {
-						System.out.println("ERROR: Cell is corrupted, Program will malfunction");
-					}
-				} else {
-					System.out.println("ERROR:Data is Corrupt, Program may malfunction");
+					int row = Integer.parseInt(lineConversion.substring(1,
+							lineConversion.indexOf(':'))) - 1;
+
+					// creates variables of data to be sent to setCell method in
+					// Cell object later
+					String data = lineConversion.substring(
+							lineConversion.indexOf(':') + 1,
+							lineConversion.indexOf(','));
+
+					int dataType = Integer.parseInt(lineConversion.substring(
+							lineConversion.lastIndexOf(',') + 1).trim());
+					CellData.spreadSheet[row][column].setCell(data, dataType);
+
 				}
-				
+			} else {
+				Main.Error_Message = "Data is Corrupt, Can't Import";
 			}
 		} catch (FileNotFoundException e) {
 			// if file can't be found
 			Main.Error_Message = "file not found";
 		}
+	}
+
+	public static boolean checkImportedFile(Scanner s) {
+		boolean isValid = true;
+		int range[] = new int[2];
+		try {
+			String dimensions = s.nextLine();
+
+			if (dimensions.charAt(0) < 48 || dimensions.charAt(0) > 57) {
+				isValid = false;
+			} else if (dimensions.charAt(1) != 'X') {
+				isValid = false;
+			} else if (dimensions.charAt(2) < 48 || dimensions.charAt(2) > 57) {
+				isValid = false;
+			} else if (dimensions.trim().length() != 3) {
+				isValid = false;
+			} else {
+				range[0] = Integer.parseInt(dimensions.charAt(0) + "");
+				range[1] = Integer.parseInt(dimensions.charAt(2) + "");
+			}
+
+		} catch (StringIndexOutOfBoundsException e) {
+			isValid = false;
+		}
+
+		try {
+			// Converts each line into specified data in each Cell of
+			// spreadSheet
+			while (s.hasNextLine()) {
+				String lineToCheck = s.nextLine();
+				// determines address of Cell
+				int dataType = Integer.parseInt(lineToCheck.substring(
+						lineToCheck.lastIndexOf(',') + 1).trim());
+				int column = lineToCheck.charAt(0) - 65;
+				int row = Integer.parseInt(lineToCheck.substring(1,
+						lineToCheck.indexOf(':'))) - 1;
+
+				if (lineToCheck.length() < 5) {
+					isValid = false;
+				} else if (lineToCheck.indexOf(':') != 2
+						&& lineToCheck.indexOf(':') != 3) {
+					isValid = false;
+				} else if (dataType < 1 || dataType > 4) {
+					isValid = false;
+				} else if (!testAddress(row, column, range)) {
+					isValid = false;
+				}
+			}
+
+		} catch (Exception e) {
+			isValid = false;
+		}
+
+		return isValid;
+
+	}
+
+	public static boolean testAddress(int row, int column, int[] range) {
+		// tests if an address in a range is true
+		boolean isTrue = true;
+		if (row > range[0] || column > range[1]) {
+			isTrue = false;
+		}
+		return isTrue;
+
 	}
 	
 	public static void autoLoad(String location) {
@@ -266,7 +326,7 @@ public class CellCommands {
 		}
 	}
 	
-	public static void setCellCommand(String com) {
+	public static void setCellCommand(String com, boolean central) {
 		try {
 			// Determines address of Cell
 			int row = com.charAt(0) - 65;
@@ -276,9 +336,13 @@ public class CellCommands {
 			String data = com.substring(com.indexOf("=") + 1).trim();
 			int displayType = inputDataType(data);
 		
-			// Asigns data and displayType
+			// Assigns data and displayType
 			if (displayType != 0) {
-				CellData.spreadSheet[column][row].setCell(data, displayType);
+				if (central){
+					CellData.spreadSheet[column][row].setCell(data, displayType);
+				} else {
+					CellData.spreadSheetCopy[column][row].setCell(data, displayType);
+				}
 			} else {
 				throw new Exception();
 			}	
@@ -362,6 +426,59 @@ public class CellCommands {
 			return false;
 		}
 	}
+
 	
+	public static void createNewArray(String s){
+		int row = Integer.parseInt(s.charAt(2) + "");
+		int column = Integer.parseInt(s.charAt(0) + "");
+		
+		CellData.spreadSheetCopy = new Cell[row][column];
+		
+		
+		// sets String field in cell array to not be null
+		for (int i = 0; i <= row - 1; i++) {
+			for (int k = 0; k <= column - 1; k++) {
+				CellData.spreadSheetCopy[i][k] = new Cell("       ", 1);
+				String addressLetter = (char) (k + 'A') + "";
+				int addressNumber = (i + 1);
+				
+				// sets cell address field by location
+				CellData.spreadSheetCopy[i][k].address = addressLetter
+						+ addressNumber;
+				
+					}
+				}
+		
+		int tempRow;
+		if (row > CellData.spreadSheet.length) {
+			tempRow = CellData.spreadSheet.length;
+		} else {
+			tempRow = row;
+		}
+
+		int tempColumn;
+		if (column > CellData.spreadSheet[0].length) {
+			tempColumn = CellData.spreadSheet[0].length;
+		} else {
+			tempColumn = column;
+		}
+
+		for (int i = 0; i <= tempRow - 1; i++) {
+			for (int k = 0; k <= tempColumn - 1; k++) {
+				char letter = (char) (k);
+				char num = (char) (i);
+				String holder = letter + "" + num + " = ";
+				
+				if (CellData.spreadSheet[i][k].displayContent == 2) {
+					holder += "\"" +  CellData.spreadSheet[i][k].text + "\"";
+				} else {
+					holder += CellData.spreadSheet[i][k].toString();
+				}
+				setCellCommand(holder, false);
+			}
+		}
+		
+		CellData.spreadSheet = CellData.spreadSheetCopy;
+	}
 }
 
