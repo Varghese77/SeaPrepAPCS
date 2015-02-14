@@ -7,11 +7,11 @@ public class OverloadedMethods {
 		double[] doubleValues = {0.1, 3.4, 29.0, 0.4, 0.1, 6.6, 3.4, 0.1, 0.1};
 
 		System.out.println("Integer mean: " + Mean(integerValues));
-		// System.out.println("Double mean: " + Mean(doubleValues));
-		// System.out.println("Integer median: " + Median(integerValues));
-		// System.out.println("Double median: " + Median(doubleValues));
-		// System.out.println("Integer mode: " + Mode(integerValues));
-		// System.out.println("Double mode: " + Mode(doubleValues));
+		System.out.println("Double mean: " + Mean(doubleValues));
+		System.out.println("Integer median: " + Median(integerValues));
+		System.out.println("Double median: " + Median(doubleValues));
+		System.out.println("Integer mode: " + Mode(integerValues));
+		System.out.println("Double mode: " + Mode(doubleValues));
 	}
 	
 	public static int[] Copy(int[] values){
@@ -93,8 +93,94 @@ public class OverloadedMethods {
 		return mean;
 	}
 	
-	// TODO: overload mean so it works with an array of doubles
+	public static double Mean(double[] values){
+		// don't want to change original array, so make a copy before sorting
+		double[] copy = Copy(values);
+		Sort(copy);
+		
+		double sum = 0;
+		for(int position = 0; position < copy.length; position++) {
+			sum += copy[position];
+		}
+		
+		double mean = sum / copy.length;
+		
+		return mean;
+	}
+	
+	public static double Median(int[] values) {
+		int[] copy = Copy(values);
+		Sort(copy);
+		
+		if (copy.length % 2 != 0) {
+			int pos = (copy.length / 2) + 1;
+			return copy[pos];
+		} else {
+			int pos = copy.length / 2;
+			return (copy[pos] + copy[pos+1]) / 2;
+		}
+		
+	}
+	
+	public static double Median(double[] values) {
+		double[] copy = Copy(values);
+		Sort(copy);
+		
+		if (copy.length % 2 != 0) {
+			int pos = (copy.length / 2) + 1;
+			return copy[pos];
+		} else {
+			int pos = copy.length / 2;
+			return (copy[pos] + copy[pos+1]) / 2;
+		}
 	
 	// TODO: overload median and mode so that it works with an array of doubles
+	}
+	
+	//public static double Mode()
+	
+	public static int Mode(int[] values) {
+		
+		int arrayLength = values.length;
+		int finalCount = 1;
+		int pos = 0;
+		
+		for (int i = 0; i < arrayLength; i++) {
+			int count = 0;
+			for (int k = 0; k < arrayLength; k++) {
+				if (values[i] == values[k]) {
+					count++;
+				}
+			}
+			if (count > finalCount) {
+				finalCount = count;
+				pos = i;
+			}
+		}
+		return values[pos];
+		
+	}
+	
+	public static double Mode(double[] values) {
+		
+		int arrayLength = values.length;
+		int finalCount = 1;
+		int pos = 0;
+		
+		for (int i = 0; i < arrayLength; i++) {
+			int count = 0;
+			for (int k = 0; k < arrayLength; k++) {
+				if (values[i] == values[k]) {
+					count++;
+				}
+			}
+			if (count > finalCount) {
+				finalCount = count;
+				pos = i;
+			}
+		}
+		return values[pos];
+		
+	}
 }
 
