@@ -56,7 +56,7 @@ public class Cell {
 	
 	public String toString() {
 		if (displayContent == 1) {
-			return "\"" + text + "\"";
+			return text;
 		} else if (displayContent == 2) {
 			return number + "";
 		} else if (displayContent == 3) {

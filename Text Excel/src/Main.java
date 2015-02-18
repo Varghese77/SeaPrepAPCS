@@ -36,14 +36,9 @@ public class Main {
 
 		// runs main loop of program until user enters quit
 		do {
-			// prints error message if there is one
-			if (!Error_Message.equals("")) {
-				System.out.print("ERROR: ");
-				System.out.println(Error_Message);
-			}
-			// makes error message blank for next cycle
-			Error_Message = "";
 
+			printErrorMessage();
+			
 			// Command prompt for user input
 			System.out.print("Visicalc> ");
 
@@ -83,6 +78,7 @@ public class Main {
 		/* This is its own method so that other methods
 		 *than main can process central commands (like autoload)
 		 */
+		
 		CellCommands.determineCommand(command);
 		PrintCells.printData();
 	}
@@ -107,5 +103,15 @@ public class Main {
 						+ addressNumber;
 			}
 		}
+	}
+	
+	public static void printErrorMessage() {
+		// prints error message if there is one
+		if (!Error_Message.equals("")) {
+			System.out.print("ERROR: ");
+			System.out.println(Error_Message);
+		}
+		// makes error message blank for next cycle
+		Error_Message = "";
 	}
 }

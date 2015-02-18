@@ -1,8 +1,12 @@
+import java.util.ArrayList;
 
 public class Formula {
 
 	// public fields
 	public String originalFormula = "no_formula_given";
+	
+	public ArrayList<String> references = new ArrayList<String>(100);
+	
 	
 	public int previousCellType;
 	
@@ -33,6 +37,7 @@ public class Formula {
 	
 	public String toString() {
 		String noParenthesesFormula = originalFormula.substring(1, originalFormula.length()-1);
+		references = new ArrayList<String>();
 		
 		// creates array of expression parts
 		String[] parts;
@@ -74,6 +79,32 @@ public class Formula {
 		
 	}
 	
+	public boolean checkReferences() {
+		return check(previousCellAddress);
+	}
+	
+	public boolean check(String address) {
+		boolean isValid = true;
+		for (int i = 0; i < references.size(); i++) {
+			if (references.get(i).equals(address)){
+				return false;
+			}
+		}
+		
+		for (int i = 0; i < references.size(); i++)  {
+			String reference = references.get(i);
+			int column = reference.charAt(0) - 65;
+			int row = reference.charAt(1) - 49;
+			
+			int cellDisplayType = CellData.spreadSheet[row][column].displayContent;
+			if (cellDisplayType == 4){
+				isValid = CellData.spreadSheet[row][column].formula.check(address);
+			}
+		}
+		
+		return isValid;
+	}
+	
 	public static boolean validateContents(String[] parts){
 		boolean isValid = true;
 		
@@ -90,7 +121,7 @@ public class Formula {
 		return isValid;
 	}
 	
-	private static void convertCellAddress(String[] parts) {
+	private void convertCellAddress(String[] parts) {
 		for (int i = 0; i < parts.length; i++) {
 			/* gets the first character in the string
 			 * Also, if the array part is empty, it is 
@@ -108,20 +139,26 @@ public class Formula {
 				
 				//determines if part possible represents an address
 				if ((firstChar >= 65 && firstChar <= 90) && parts[i].length() == 2) {
+					references.add(parts[i]);
 					
 					//converts address to array indices 
 					int column = firstChar - 65;
 					int row = parts[i].charAt(1) - 49;
 				
 					try {
-					// swaps data from cell to temporary string to formula
-					String tempStringHolder = CellData.spreadSheet[row][column].toString();
-					parts[i] = tempStringHolder;
+					if (checkReferences()){
+						// swaps data from cell to temporary string to formula
+						String tempStringHolder = CellData.spreadSheet[row][column].toString();
+						parts[i] = tempStringHolder;
 					
-					//tests if the data swapped is a real number
-					Double.parseDouble(parts[i]);
+						//tests if the data swapped is a real number
+						Double.parseDouble(parts[i]);
+					}else {
+						Exception e = new Exception();
+						throw e;
+					}
 					} catch (Exception e) { // ArrayIndexOutOfBoundsException or stackOverflowError
-					terminateFormula(parts);
+						terminateFormula(parts);
 					}
 				}
 			} else {
@@ -136,9 +173,12 @@ public class Formula {
 				}
 			}
 		}
+		if (!checkReferences()) {
+			terminateFormula(parts);
+		}
 	}
 	
-	private static void mult_div(String[] parts) {
+	private void mult_div(String[] parts) {
 		for (int i = 1; i < parts.length; i++) {
 			//determines if any index of the array contains a multiplication or division operator
 			if (parts[i].equals("*") || parts[i].equals("/")){
@@ -151,7 +191,7 @@ public class Formula {
 						parts[i-1] = "" + tempValue;
 						
 						// shifts data in array over for next cycle
-						for (int k = i; k < parts.length - 3; k++) {
+						for (int k = i; k < parts.length - 2; k++) {
 							parts[k] = parts[k + 2];
 						}
 						
@@ -159,6 +199,7 @@ public class Formula {
 						parts[parts.length - 1] = "";
 						parts[parts.length - 2] = "";
 						
+						i = 0;
 					} catch (NumberFormatException division) {
 						// in case one part of the expression was not a number
 						terminateFormula(parts);
@@ -178,6 +219,8 @@ public class Formula {
 						// clears data that was already processed and placed in the back of the array
 						parts[parts.length - 1] = "";
 						parts[parts.length - 2] = "";
+						
+						i = 0;
 					} catch (NumberFormatException division) {
 						// in case one part of the expression was not a number
 						terminateFormula(parts);
@@ -190,7 +233,7 @@ public class Formula {
 		}
 	}
 	
-	private static void add_sub(String[] parts) {
+	private  void add_sub(String[] parts) {
 	
 		for (int i = 1; i < parts.length; i++) {
 			//determines if any index of the array contains an addition or subtraction operator
@@ -203,13 +246,15 @@ public class Formula {
 					parts[i-1] = "" + tempValue;
 					
 					// shifts data in array over for next cycle
-					for (int k = i; k < parts.length - 3; k++) {
+					for (int k = i; k < parts.length - 2; k++) {
 						parts[k] = parts[k + 2];
 					}
 					
 					// clears data that was already processed and placed in the back of the array
 					parts[parts.length - 1] = "";
 					parts[parts.length - 2] = "";
+					
+					i = 0;
 					} catch (NumberFormatException plus) {
 						// in case one part of the expression was not a number
 						terminateFormula(parts);
@@ -230,6 +275,8 @@ public class Formula {
 						// clears data that was already processed and placed in the back of the array
 						parts[parts.length - 1] = "";
 						parts[parts.length - 2] = "";
+						
+						i = 0;
 					} catch (NumberFormatException minus) {
 						// in case one part of the expression was not a number
 						terminateFormula(parts);
@@ -241,7 +288,7 @@ public class Formula {
 		}
 	}
 	
-	private static String sum(String sum){
+	private String sum(String sum){
 		String range = sum.substring(sum.indexOf("(" ) + 1, sum.lastIndexOf(")"));
 		
 		// gets dimensions of box to sort from range
@@ -257,34 +304,48 @@ public class Formula {
 		
 		/* adds up all the numbers from 
 		 * each cell in box as well as 
-		 * counts teh number of cells
+		 * counts the number of cells
 		 */
 		double total = 0;
 		int numOfCells = 0;
 		for (int i = 0; i < boxHeight; i++) {
 			for (int k = 0; k < boxWidth; k++) {
-				total += CellData.spreadSheet[startingVerticalDisplacement+ i][startingHorizontalDisplacement + k].number;
+				int row = startingVerticalDisplacement+ i;
+				int column = startingHorizontalDisplacement + k;
+				total += CellData.spreadSheet[row][column].number;
 				numOfCells++;
+				
+				String Address = (char) (column + 65) + "" + (char) (row + 49);
+					references.add(Address);
 				}
 			}
+		if (!checkReferences()) {
+			return "";
+		}
 		// returns data and number of cells to be processed later
 		return total + " " + numOfCells;
 	}
 
-	private static String avg(String avg){
-		// uses sum method to get data
-		String[] sumData = sum(avg).split(" ");
+	private String avg(String avg){
+		String toBeSplit = sum(avg);
+		if (toBeSplit.length() != 0){
+			// uses sum method to get data
+			String[] sumData = toBeSplit.split(" ");
 		
-		/* divides sum of cells by the number 
-		 * of cells based on returned data from sum
-		 */
-		return (Double.parseDouble(sumData[0]) / Double.parseDouble(sumData[1])) + "";
+			/* divides sum of cells by the number 
+			 * of cells based on returned data from sum
+			 */
+			return (Double.parseDouble(sumData[0]) / Double.parseDouble(sumData[1])) + "";
+		} else {
+			return "";
+		}
 		
 	}
 	
-	public static void terminateFormula(String[] parts) {
-		// makes array acomplish nothing and displays error message
-		Main.Error_Message = "part(s) of the formula isn't a number";
+	public void terminateFormula(String[] parts) {
+		// makes array accomplish nothing and displays error message
 		parts[0] = "";
+		
+		Main.Error_Message = "Formula couldn't be evaluated";
 	}
 }

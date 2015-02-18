@@ -250,20 +250,19 @@ public class CellCommands {
 		try {
 			String dimensions = s.nextLine();
 
-			if (dimensions.charAt(0) < 48 || dimensions.charAt(0) > 57) {
-				isValid = false;
-			} else if (dimensions.charAt(1) != 'X') {
-				isValid = false;
-			} else if (dimensions.charAt(2) < 48 || dimensions.charAt(2) > 57) {
-				isValid = false;
-			} else if (dimensions.trim().length() != 3) {
-				isValid = false;
-			} else {
-				range[0] = Integer.parseInt(dimensions.charAt(0) + "");
-				range[1] = Integer.parseInt(dimensions.charAt(2) + "");
+			int row = Integer.parseInt(dimensions.substring(0, dimensions.indexOf('X')));
+			int column = Integer.parseInt(dimensions.substring(dimensions.indexOf('X') + 1));
+			
+			int numTest = row * column;
+			if (numTest <= 0) {
+				Exception exception = new Exception(); 
+				throw exception;
 			}
+			range[0] = row;
+			range[1] = column;
+			
 
-		} catch (StringIndexOutOfBoundsException e) {
+		} catch (Exception e) {
 			isValid = false;
 		}
 
@@ -315,11 +314,24 @@ public class CellCommands {
 		try {
 			s = new Scanner(f);
 			while (s.hasNextLine()) {
-				String Command = s.nextLine();
+				String Command = s.nextLine().trim();
+				
+				for (int i = 0; i < Command.length(); i++){
+					int idx = Command.charAt(i);
+					if (idx == 8220 || idx == 8221) {
+						String tempString1 = Command.substring(0, i);
+						String tempString2 = Command.substring(i + 1);
+						Command = tempString1 + "\"" + tempString2;
+					}
+				}
+				
 				System.out.println("Command:" + Command);
 				Main.commandProcessing(Command);
+				Main.printErrorMessage();
 				System.out.println();
 			}
+			
+			System.out.println("Current Table!");
 		} catch (FileNotFoundException e) {
 			// if file can't be found
 			Main.Error_Message = "file not found";
@@ -465,11 +477,11 @@ public class CellCommands {
 
 		for (int i = 0; i <= tempRow - 1; i++) {
 			for (int k = 0; k <= tempColumn - 1; k++) {
-				char letter = (char) (k);
-				char num = (char) (i);
+				char letter = (char) (k + 65);
+				char num = (char) (i + 49);
 				String holder = letter + "" + num + " = ";
 				
-				if (CellData.spreadSheet[i][k].displayContent == 2) {
+				if (CellData.spreadSheet[i][k].displayContent == 1) {
 					holder += "\"" +  CellData.spreadSheet[i][k].text + "\"";
 				} else {
 					holder += CellData.spreadSheet[i][k].toString();
@@ -479,6 +491,7 @@ public class CellCommands {
 		}
 		
 		CellData.spreadSheet = CellData.spreadSheetCopy;
+		PrintCells.rows = row;
+		PrintCells.columns = column;
 	}
 }
-
