@@ -1,0 +1,293 @@
+Text Excel Version 1.0 Updated February 19th 2015
+==================================================
+
+This version of Text Excel was coded by Roy Mathew 
+for the AP Computer Science Class for Seattle Prep. 
+The purpose of this project is to create a console-based 
+Excel-like spreadsheet, akin to VisiCalc. The program 
+will take in user input in form of commands to manipulate 
+information stored in the spreadsheet. 
+
+General Usage Notes
+==================================================
+
+- Text Excel is meant to be run in the eclipse IDE 
+  with output displaying in the console.
+  
+- The Spreadsheet can support maximum dimensions of 
+  26X26. Anything larger might cause errors. 
+  
+- Input is meant to be taken from either the console 
+  or a separate text file specified with the import 
+  command. 
+  
+- Always use spaces between each part of input
+  specific syntax for input will be specified below. 
+	i.e <A1 = 3> is valid, <A1 =3> is not. The only 
+	exception is when using curly braces.  
+	
+- The spreadsheet will update its display after each 
+  command is fully processed, not during it. 
+  
+- For the purposes of this read me, <>'s are used 
+  to specify user input, 
+  
+- This program was developed on a Mac. 
+
+Extra Credit Attempted 
+==================================================
+
+- Disallow entering of formulas with circular references
+
+- Honors operator order-of-operations in arithmetic formulas
+
+- Executes formulas with both arithmetic operations as well 
+  as SUM and AVG operations
+  
+- Allows user to change dimensions of the spreadsheet on the 
+  fly
+  
+- Auto-executed test plan
+
+How to Use Program
+==================================================
+
+First the program will ask the user to enter the 
+desired dimensions of the table in the form of two 
+numbers separated by an upper case X (i.e <10X3>). 
+Even if the user wants to auto execute a list of 
+commands he/she must first perform this initial step 
+must happen. 
+
+Next the program will ask the user if he/she wants 
+to auto execute a test plan from an external list of 
+commands saved in text format by entering <yes> or 
+<no>. The external text file should have one command 
+per line i.e 
+
+	<A1 = 8
+	 A2 = "hello"
+	 import /Users/Documents/save.txt>
+	 
+After a list of commands is auto executed (or not), 
+spreadsheet will display with its current data. The 
+user can then enter one of many commands including...
+
+Command Examples
+==================================================
+
+	1.   <Cell A1>
+		Display the contents of the cell identified by 
+		cell address after <Cell>. Will display formula 
+		and not final evaluation if cell content is a 
+		formula. 
+		
+	2.   <A1 = 5.7>
+		Set the value of a cell to a real value. All numbers 
+		must be in decimal form
+		
+	3.   <A1 = 01/03/15>
+		Set the value of a cell to a date value. All dates 
+		must be in the form DD/MM/YR.
+	
+	4.   <A1 = "hello">
+		Set the value of a cell to a text value. All numbers 
+		must be surrounded by straight quotation marks. 
+		
+	5.   <A1 = (A2 * sum(A3-B4) - 8)>
+		Sets the value of the cell to a formula. Formula 
+		will only refer to other cells that contain a number 
+		or formula. THe formula must be surrounded by curly braces.
+		Formula can use the sum and avg method with the range 
+		specified in curly braces having the upper left cell and 
+		lower right cell addresses separated by a hyphen.
+		 
+	6.   <clear>
+		Clears the entire spreadsheet. If a cell is refered to in a
+		formula then it defaults to 0.
+		
+	7.   <clear A1>
+		Clears a specific cell
+		
+	8.   <sortd A1-B3>
+		Sorts the cells in a given range in descending order. The range 
+		is specified in curly braces having the upper left cell and 
+		lower right cell addresses separated by a hyphen. 
+		
+	9.   <sorta B3-D4>
+		Sorts the cells in a given range in ascending order. The range 
+		is specified in curly braces having the upper left cell and 
+		lower right cell addresses separated by a hyphen. 
+		
+	10.  <import /Users/Varghese/Documents/RandomSaveData.txt> 
+		Imports a save of the spreadsheet in the specified folder 
+		location after the space. Save must be a text file. 
+		 
+	11.  <export /Users/Varghese/Documents/RandomSaveData2.txt>
+		Exports a save of the spreadsheet in the specified folder 
+		location after the space. Save must be a text file. 
+		
+	12.  <New Dimensions 4X4>
+		Creates a new spreadsheet with the specified dimensions 
+		after the second space in the same format as was used to 
+		initialize the program. 
+		
+	13.  <quit>
+		Terminates program
+
+Sample Console Output
+==================================================
+
+Enter the dimensions of the spreadsheet separated by 'X'
+3X3
+Do you want to autoload commands from a document? Enter yes or no.
+yes
+File Location:/Users/Varghese/Documents/Test.txt
+Command <New Dimensions 5X5>
+-------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |
+-------------------------------------------------
+||  1  ||       |       |       |       |       |
+-------------------------------------------------
+||  2  ||       |       |       |       |       |
+-------------------------------------------------
+||  3  ||       |       |       |       |       |
+-------------------------------------------------
+||  4  ||       |       |       |       |       |
+-------------------------------------------------
+||  5  ||       |       |       |       |       |
+-------------------------------------------------
+
+Command <A1 = 1>
+-------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |
+-------------------------------------------------
+||  1  ||    1.0|       |       |       |       |
+-------------------------------------------------
+||  2  ||       |       |       |       |       |
+-------------------------------------------------
+||  3  ||       |       |       |       |       |
+-------------------------------------------------
+||  4  ||       |       |       |       |       |
+-------------------------------------------------
+||  5  ||       |       |       |       |       |
+-------------------------------------------------
+
+Command <A2 = (A1)>
+-------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |
+-------------------------------------------------
+||  1  ||    1.0|       |       |       |       |
+-------------------------------------------------
+||  2  ||    1.0|       |       |       |       |
+-------------------------------------------------
+||  3  ||       |       |       |       |       |
+-------------------------------------------------
+||  4  ||       |       |       |       |       |
+-------------------------------------------------
+||  5  ||       |       |       |       |       |
+-------------------------------------------------
+
+Command <import /Users/Varghese/Documents/RandomSaveData.txt>
+---------------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |   F   |
+---------------------------------------------------------
+||  1  ||55.906>|68.884>|29.436>|37.890>|47.694>|64.453>|
+---------------------------------------------------------
+||  2  ||61.128>|47.138>|19.630>|8.6269>|41.603>|10.375>|
+---------------------------------------------------------
+||  3  ||64.354>|55.158>|50.071>|49.385>|80.163>|18.645>|
+---------------------------------------------------------
+||  4  ||59.393>|61.177>|82.289>|16.586>|70.195>|35.694>|
+---------------------------------------------------------
+||  5  ||45.985>|84.325>|72.937>|54.177>|88.071>|0.8042>|
+---------------------------------------------------------
+||  6  ||22.165>|77.843>|27.693>|91.668>|61.604>|97.949>|
+---------------------------------------------------------
+
+Command <sorta A1-D5>
+---------------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |   F   |
+---------------------------------------------------------
+||  1  ||8.6269>|16.586>|19.630>|29.436>|47.694>|64.453>|
+---------------------------------------------------------
+||  2  ||37.890>|45.985>|47.138>|49.385>|41.603>|10.375>|
+---------------------------------------------------------
+||  3  ||50.071>|54.177>|55.158>|55.906>|80.163>|18.645>|
+---------------------------------------------------------
+||  4  ||59.393>|61.128>|61.177>|64.354>|70.195>|35.694>|
+---------------------------------------------------------
+||  5  ||68.884>|72.937>|82.289>|84.325>|88.071>|0.8042>|
+---------------------------------------------------------
+||  6  ||22.165>|77.843>|27.693>|91.668>|61.604>|97.949>|
+---------------------------------------------------------
+
+Command <New Dimensions 5X5>
+-------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |
+-------------------------------------------------
+||  1  ||8.6269>|16.586>|19.630>|29.436>|47.694>|
+-------------------------------------------------
+||  2  ||37.890>|45.985>|47.138>|49.385>|41.603>|
+-------------------------------------------------
+||  3  ||50.071>|54.177>|55.158>|55.906>|80.163>|
+-------------------------------------------------
+||  4  ||59.393>|61.128>|61.177>|64.354>|70.195>|
+-------------------------------------------------
+||  5  ||68.884>|72.937>|82.289>|84.325>|88.071>|
+-------------------------------------------------
+
+Current Table!
+-------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |
+-------------------------------------------------
+||  1  ||8.6269>|16.586>|19.630>|29.436>|47.694>|
+-------------------------------------------------
+||  2  ||37.890>|45.985>|47.138>|49.385>|41.603>|
+-------------------------------------------------
+||  3  ||50.071>|54.177>|55.158>|55.906>|80.163>|
+-------------------------------------------------
+||  4  ||59.393>|61.128>|61.177>|64.354>|70.195>|
+-------------------------------------------------
+||  5  ||68.884>|72.937>|82.289>|84.325>|88.071>|
+-------------------------------------------------
+Visicalc> E5 = (Sum(A1-C3) * 8)
+
+-------------------------------------------------
+|       |   A   |   B   |   C   |   D   |   E   |
+-------------------------------------------------
+||  1  ||8.6269>|16.586>|19.630>|29.436>|47.694>|
+-------------------------------------------------
+||  2  ||37.890>|45.985>|47.138>|49.385>|41.603>|
+-------------------------------------------------
+||  3  ||50.071>|54.177>|55.158>|55.906>|80.163>|
+-------------------------------------------------
+||  4  ||59.393>|61.128>|61.177>|64.354>|70.195>|
+-------------------------------------------------
+||  5  ||68.884>|72.937>|82.289>|84.325>|2682.1>|
+-------------------------------------------------
+Visicalc> quit
+
+Thank you for using Text Excel!
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

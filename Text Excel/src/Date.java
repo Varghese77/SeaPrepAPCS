@@ -13,7 +13,7 @@ public class Date {
 		String[] dateParts = s.split("/");
 		month = Integer.parseInt(dateParts[0]);
 		day = Integer.parseInt(dateParts[1]);
-		year = Integer.parseInt(dateParts[1]);
+		year = Integer.parseInt(dateParts[2]);
 	}
 
 	public String toString() {

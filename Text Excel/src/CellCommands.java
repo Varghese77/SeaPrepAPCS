@@ -34,6 +34,35 @@ public class CellCommands {
 		}
 	}
 
+	public static boolean checkRange(String upperLeft, String lowerRight) {
+		int tableLength = CellData.spreadSheet.length;
+		int tableWidth = CellData.spreadSheet[0].length;
+		
+		try {
+			int upperLeftColumn = upperLeft.charAt(0) - 64;
+			int upperLeftRow = Integer.parseInt(upperLeft.substring(1));
+		
+			if (upperLeftColumn > tableLength || upperLeftRow > tableWidth){
+				return false;
+			}
+		
+			int lowerRightColumn = lowerRight.charAt(0) - 64;
+			int lowerRightRow = Integer.parseInt(lowerRight.substring(1));
+		
+			if (lowerRightColumn > tableLength || lowerRightRow > tableWidth){
+				return false;
+			}
+		
+			if (upperLeftRow > lowerRightRow || upperLeftColumn > lowerRightColumn){
+				return false;
+			}
+			return true;
+		} catch (NumberFormatException inValidRange) {
+			return false;
+		}
+		
+	}
+	
 	public static void clearCell(String com) {
 		if (com.indexOf(' ') == -1) {
 			// clears entire spreadsheet
@@ -43,16 +72,48 @@ public class CellCommands {
 				}
 			}
 		} else {
-			// extracts address from characters after "clear"
-			int addressIndex = com.indexOf("CLEAR") + 5;
-			String address = com.substring(addressIndex).trim();
+			try {
+				// extracts address from characters after "clear"
+				int addressIndex = com.indexOf("CLEAR") + 5;
+				String address = com.substring(addressIndex).trim();
 
-			// parses address
-			int row = address.charAt(0) - 65;
-			int column = address.charAt(1) - 49;
+				// parses address
+				int row = address.charAt(0) - 65;
+				int column = address.charAt(1) - 49;
 			
-			// clears specific cell
-			CellData.spreadSheet[column][row] = new Cell("       ", 1);
+				// terminates program if address is invalid
+				if (!checkRange("A1", address)){
+					StringIndexOutOfBoundsException e = new StringIndexOutOfBoundsException();
+					throw e;
+				}
+				
+				//test to see if any formula is dependent on this cell
+				int tableColumn = CellData.spreadSheet.length;
+				int tableRow = CellData.spreadSheet[0].length;
+				
+				boolean refered = true;
+				
+				for (int i = 0; i < tableColumn; i++){
+					for (int k = 0; k < tableRow; k++){
+						if (CellData.spreadSheet[i][k].displayContent == 4 ){
+							if (!CellData.spreadSheet[i][k].formula.check(address)) {
+								refered = false;
+							}
+						}
+					}
+				}
+				
+				if (!refered){
+					CellData.spreadSheet[column][row] = new Cell("0.0", 2);
+					Main.Error_Message = "Cell Defaulted to 0 because \nit is used in a formula";
+					return;
+				}
+				
+				// clears specific cell
+				CellData.spreadSheet[column][row] = new Cell("       ", 1);
+			} catch (StringIndexOutOfBoundsException e) {
+				Main.Error_Message = "Unable to determine command";
+			}
 		}
 
 	}
@@ -62,8 +123,16 @@ public class CellCommands {
 		// determines range of box to sort numbers
 		String range = com.substring(com.indexOf("SORT") + 5).trim();
 		
+		String upperLeft = range.substring(0, range.indexOf('-'));
+		String lowerRight = range.substring(range.indexOf('-') + 1);
+		
+		// checks range to see it method needs to terminate
+		if (!checkRange(upperLeft, lowerRight)){
+			Main.Error_Message = "Range is invalid!";
+			return;
+		}
+		
 		// gets dimensions of box to sort from range
-		// FIX THIS FOR DOUBLE DIGITS!!!!!!!!!!!!!!!!!!!!!!!!
 		int rangeWidth = range.charAt(range.indexOf('-') + 1) - range.charAt(0) + 1;
 		int rangeHeight = Integer.parseInt(range.substring(range.indexOf('-') + 2))
 		- Integer.parseInt(range.substring(1, range.indexOf('-'))) + 1;
@@ -98,8 +167,11 @@ public class CellCommands {
 			// sorts data in temporary array
 			if (order == 'A') {
 				arrangeAscending(tempValues);
-			} else {
+			} else if (order == 'D') {
 				arrangeDescending(tempValues);
+			} else {
+				Exception e = new Exception();
+				throw e;
 			}
 			
 			// rearranges doubles in Cell box in desired order
@@ -325,7 +397,7 @@ public class CellCommands {
 					}
 				}
 				
-				System.out.println("Command:" + Command);
+				System.out.println("Command <" + Command + ">");
 				Main.commandProcessing(Command);
 				Main.printErrorMessage();
 				System.out.println();
@@ -364,9 +436,14 @@ public class CellCommands {
 	}
 
 	public static void showCell(String Address) {
-		int column = Address.charAt(0) - 65;
-		int row = Address.charAt(1) - 49;
-		System.out.println("Cell " + Address + ": " + CellData.spreadSheet[row][column].displayInternalContent());
+		try {
+			int column = Address.charAt(0) - 65;
+			int row = Address.charAt(1) - 49;
+		
+			System.out.println("Cell " + Address + ": " + CellData.spreadSheet[row][column].displayInternalContent());
+		} catch (ArrayIndexOutOfBoundsException e){
+			Main.Error_Message = "Can't determine which cell(s) to show";
+		}
 	}
 	
 	public static int inputDataType(String data) {
@@ -415,11 +492,17 @@ public class CellCommands {
 		if (parts.length != 3) {
 			return false;
 		}
+		
 		for (int i = 0; i <= 2; i++) {
 			String part = parts[i];
 			int partLength = part.length();
+			
+			if (partLength > 2) {
+				return false;
+			}
+			
 			for (int k = 0; k <= partLength - 1; k++) {
-				if (part.charAt(k) < '1' && part.charAt(k) > '0') {
+				if (part.charAt(k) < '0' || part.charAt(k) > '9') {
 					return false;
 				}
 			}
@@ -439,10 +522,16 @@ public class CellCommands {
 		}
 	}
 
-	
 	public static void createNewArray(String s){
-		int row = Integer.parseInt(s.charAt(2) + "");
-		int column = Integer.parseInt(s.charAt(0) + "");
+		int row = 0;
+		int column = 0;
+		try {
+			column = Integer.parseInt(s.substring(0, s.indexOf('X')));
+			row = Integer.parseInt(s.substring(s.indexOf('X') + 1));
+		} catch (Exception e){
+			Main.Error_Message = "Could not determine dimensions of new table!";
+			return;
+		}
 		
 		CellData.spreadSheetCopy = new Cell[row][column];
 		

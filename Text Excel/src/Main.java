@@ -44,16 +44,17 @@ public class Main {
 
 			// Retrieves command
 			command = scan.nextLine().trim();
+			System.out.println();
 			if (!command.equals("quit")) {
 				
 				//sends command to be processed
 				commandProcessing(command);
 			}
 
-		} while (!command.equals("quit"));
+		} while (!command.toLowerCase().equals("quit"));
+		System.out.println("Thank you for using Text Excel!");
 		scan.close();
 
-		System.out.println(CellData.spreadSheetCopy[0][0].number);
 	}
 
 	public static void handleDimensions() {

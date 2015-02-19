@@ -167,7 +167,11 @@ public class Formula {
 					String tempStringHolder = sum(parts[i]);
 					
 					// swaps data
-					parts[i] = tempStringHolder.substring(0, tempStringHolder.indexOf(" "));
+					if (tempStringHolder.length() != 0){
+						parts[i] = tempStringHolder.substring(0, tempStringHolder.indexOf(" "));
+					} else {
+						terminateFormula(parts);
+					}
 				} else {
 					parts[i] = avg(parts[i]);
 				}
@@ -212,7 +216,7 @@ public class Formula {
 						parts[i-1] = "" + tempValue;
 						
 						// shifts data in array over for next cycle
-						for (int k = i; k < parts.length - 3; k++) {
+						for (int k = i; k < parts.length - 2; k++) {
 							parts[k] = parts[k + 2];
 						}
 						
@@ -268,7 +272,7 @@ public class Formula {
 						parts[i-1] = "" + tempValue;
 						
 						// shifts data in array over for next cycle
-						for (int k = i; k < parts.length - 3; k++) {
+						for (int k = i; k < parts.length - 2; k++) {
 							parts[k] = parts[k + 2];
 					}
 						
@@ -289,7 +293,20 @@ public class Formula {
 	}
 	
 	private String sum(String sum){
-		String range = sum.substring(sum.indexOf("(" ) + 1, sum.lastIndexOf(")"));
+		
+		String range = "";
+		try {
+			range = sum.substring(sum.indexOf("(" ) + 1, sum.lastIndexOf(")"));
+		
+			String upperLeft = range.substring(0, range.indexOf('-'));
+			String lowerRight = range.substring(range.indexOf('-') + 1);
+		
+			if (!CellCommands.checkRange(upperLeft, lowerRight)){
+				return "";
+			}
+		} catch (StringIndexOutOfBoundsException e){
+			return "";
+		}
 		
 		// gets dimensions of box to sort from range
 		int boxWidth = range.charAt(range.indexOf('-') + 1) - range.charAt(0) + 1;
