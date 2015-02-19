@@ -36,14 +36,14 @@
 public class SimpleMBSDemo1
 {
     // Specify number of rows and columns in environment.
-    private static final int ENV_ROWS = 100;      // rows in environment
-    private static final int ENV_COLS = 100;      // columns in environment
+    private static final int ENV_ROWS = 10;      // rows in environment
+    private static final int ENV_COLS = 10;      // columns in environment
 
     // Specify how many timesteps to run the simulation.
-    private static final int NUM_STEPS = 1000000;     // number of timesteps
+    private static final int NUM_STEPS = 15;     // number of timesteps
 
     // Specify the time delay for each step
-    private static final int DELAY = 200;        // delay in milliseconds
+    private static final int DELAY = 1000;        // delay in milliseconds
 
     /** Start the Marine Biology Simulation program.
      *  The String arguments (args) are not used in this application.
