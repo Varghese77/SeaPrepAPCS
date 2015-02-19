@@ -7,29 +7,32 @@ public class CellCommands {
 
 	// Sends command to specific method
 	public static void determineCommand(String com) {
-		
-		if (com.toUpperCase().indexOf("CLEAR") != -1) {
-			clearCell(com.toUpperCase());
-		} else if (com.toUpperCase().indexOf("SORT") != -1) {
-			sort(com.toUpperCase());
-		} else if (com.toUpperCase().indexOf("IMPORT") != -1) {
-			int startidx = com.toUpperCase().indexOf("IMPORT") + 7;
-			String location = com.substring(startidx).trim();
-			importFile(location);
-		} else if (com.toUpperCase().indexOf("EXPORT") != -1) {
-			int startidx = com.indexOf("EXPORT") + 7;
-			String location = com.substring(startidx).trim();
-			exportFile(location);
-		} else  if (com.indexOf("=") != -1){
-			// Sends normal command with unmodified data
-			setCellCommand(com, true);
-		} else if (com.toUpperCase().indexOf("CELL ") != -1){
-			com = com.substring(com.toUpperCase().indexOf("CELL ") + 4).trim();
-			showCell(com);
-		} else if (com.toUpperCase().indexOf("NEW DIMENSIONS") != -1) {
-			com = com.substring(com.toUpperCase().indexOf("NEW DIMENSIONS") + 14).trim();
-			createNewArray(com);
-		} else {	
+		try {
+			if (com.toUpperCase().indexOf("CLEAR") != -1) {
+				clearCell(com.toUpperCase());
+			} else if (com.toUpperCase().indexOf("SORT") != -1) {
+				sort(com.toUpperCase());
+			} else if (com.toUpperCase().indexOf("IMPORT") != -1) {
+				int startidx = com.toUpperCase().indexOf("IMPORT") + 7;
+				String location = com.substring(startidx).trim();
+				importFile(location);
+			} else if (com.toUpperCase().indexOf("EXPORT") != -1) {
+				int startidx = com.indexOf("EXPORT") + 7;
+				String location = com.substring(startidx).trim();
+				exportFile(location);
+			} else  if (com.indexOf("=") != -1){
+				// Sends normal command with unmodified data
+				setCellCommand(com, true);
+			} else if (com.toUpperCase().indexOf("CELL ") != -1){
+				com = com.substring(com.toUpperCase().indexOf("CELL ") + 4).trim();
+				showCell(com);
+			} else if (com.toUpperCase().indexOf("NEW DIMENSIONS") != -1) {
+				com = com.substring(com.toUpperCase().indexOf("NEW DIMENSIONS") + 14).trim();
+				createNewArray(com);
+			} else {	
+				Main.Error_Message = "Unable to determine command";
+			}
+		} catch (Exception e) {
 			Main.Error_Message = "Unable to determine command";
 		}
 	}
@@ -69,6 +72,11 @@ public class CellCommands {
 			for (int i = 0; i < PrintCells.rows; i++) {
 				for (int k = 0; k < PrintCells.columns; k++) {
 					CellData.spreadSheet[i][k] = new Cell("       ", 1);
+					String addressLetter = (char) (k + 'A') + "";
+					int addressNumber = (i + 1);
+					// sets cell address field by location
+					CellData.spreadSheet[i][k].address = addressLetter
+							+ addressNumber;
 				}
 			}
 		} else {
@@ -105,12 +113,14 @@ public class CellCommands {
 				
 				if (!refered){
 					CellData.spreadSheet[column][row] = new Cell("0.0", 2);
+					CellData.spreadSheet[column][row].address = address;
 					Main.Error_Message = "Cell Defaulted to 0 because \nit is used in a formula";
 					return;
 				}
 				
 				// clears specific cell
 				CellData.spreadSheet[column][row] = new Cell("       ", 1);
+				CellData.spreadSheet[column][row].address = address;
 			} catch (StringIndexOutOfBoundsException e) {
 				Main.Error_Message = "Unable to determine command";
 			}
@@ -441,7 +451,7 @@ public class CellCommands {
 			int row = Address.charAt(1) - 49;
 		
 			System.out.println("Cell " + Address + ": " + CellData.spreadSheet[row][column].displayInternalContent());
-		} catch (ArrayIndexOutOfBoundsException e){
+		} catch (Exception e){
 			Main.Error_Message = "Can't determine which cell(s) to show";
 		}
 	}

@@ -15,7 +15,9 @@ General Usage Notes
   with output displaying in the console.
   
 - The Spreadsheet can support maximum dimensions of 
-  26X26. Anything larger might cause errors. 
+  26X26. Anything larger might cause errors. In addition 
+  the spreadsheet should never be set to 0X0 because it 
+  cause the entire program to to malfunction.
   
 - Input is meant to be taken from either the console 
   or a separate text file specified with the import 
@@ -104,20 +106,26 @@ Command Examples
 		 
 	6.   <clear>
 		Clears the entire spreadsheet. If a cell is refered to in a
-		formula then it defaults to 0.
+		formula then it defaults to 0. When the user types clear but 
+		accidently follows it with other characters (i.e <clearq>), the 
+		program will clear the entire spreadsheet anyway. This is an 
+		example of auto-correcting user errors. 
 		
 	7.   <clear A1>
-		Clears a specific cell
+		Clears a specific cell. If a cell is refered to in a
+		formula then it defaults to 0.
 		
 	8.   <sortd A1-B3>
 		Sorts the cells in a given range in descending order. The range 
 		is specified in curly braces having the upper left cell and 
-		lower right cell addresses separated by a hyphen. 
+		lower right cell addresses separated by a hyphen. Sorting will 
+		happen row by row to the right and going down.
 		
 	9.   <sorta B3-D4>
 		Sorts the cells in a given range in ascending order. The range 
 		is specified in curly braces having the upper left cell and 
-		lower right cell addresses separated by a hyphen. 
+		lower right cell addresses separated by a hyphen. Sorting will 
+		happen row by row to the right and going down.
 		
 	10.  <import /Users/Varghese/Documents/RandomSaveData.txt> 
 		Imports a save of the spreadsheet in the specified folder 

@@ -69,7 +69,7 @@ public class Main {
 			spreadSheetMeta(dimensions);
 		} catch (Exception e) {
 			// Method recalls itself if user doesn't follow dimensions format
-			System.out.println("Dimensions formot not correct, remember to use an uppercase 'X'.\n");
+			System.out.println("Dimensions format not correct, remember to use an uppercase 'X'.\n");
 			Main.handleDimensions();
 		}
 	}
