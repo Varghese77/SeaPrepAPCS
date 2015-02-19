@@ -14,6 +14,13 @@ General Usage Notes
 - Text Excel is meant to be run in the eclipse IDE 
   with output displaying in the console.
   
+- Always use spaces between each part of input
+  specific syntax for input will be specified below. 
+  i.e <A1 = 3> is valid, <A1 =3> is not. The only 
+  exception is when using curly braces and all text within 
+  curly braces must stick close to the first and last brace. 
+  i.e <A1 = (1)> is valid, <A1 = ( 1 )> is not.  
+  
 - The Spreadsheet can support maximum dimensions of 
   26X26. Anything larger might cause errors. In addition 
   the spreadsheet should never be set to 0X0 because it 
@@ -22,11 +29,6 @@ General Usage Notes
 - Input is meant to be taken from either the console 
   or a separate text file specified with the import 
   command. 
-  
-- Always use spaces between each part of input
-  specific syntax for input will be specified below. 
-	i.e <A1 = 3> is valid, <A1 =3> is not. The only 
-	exception is when using curly braces.  
 	
 - The spreadsheet will update its display after each 
   command is fully processed, not during it. 
@@ -102,7 +104,9 @@ Command Examples
 		or formula. THe formula must be surrounded by curly braces.
 		Formula can use the sum and avg method with the range 
 		specified in curly braces having the upper left cell and 
-		lower right cell addresses separated by a hyphen.
+		lower right cell addresses separated by a hyphen. All 
+		operations must be mathematically valid (i.e <A1 = (1 / 0)> 
+		will cause a wrong answer to appear in the cell. 
 		 
 	6.   <clear>
 		Clears the entire spreadsheet. If a cell is refered to in a

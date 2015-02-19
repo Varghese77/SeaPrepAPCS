@@ -38,10 +38,12 @@ public class CellCommands {
 	}
 
 	public static boolean checkRange(String upperLeft, String lowerRight) {
+		//Creates Dimensions of spreadsheet
 		int tableLength = CellData.spreadSheet.length;
 		int tableWidth = CellData.spreadSheet[0].length;
 		
 		try {
+			// determines if upper left cell is in the spreadsheet
 			int upperLeftColumn = upperLeft.charAt(0) - 64;
 			int upperLeftRow = Integer.parseInt(upperLeft.substring(1));
 		
@@ -49,16 +51,18 @@ public class CellCommands {
 				return false;
 			}
 		
+			// determines if lower right cell is in the spreadsheet
 			int lowerRightColumn = lowerRight.charAt(0) - 64;
 			int lowerRightRow = Integer.parseInt(lowerRight.substring(1));
 		
 			if (lowerRightColumn > tableLength || lowerRightRow > tableWidth){
 				return false;
 			}
-		
+			// determines if upper left cell is actually above and t the left of the lower right cell
 			if (upperLeftRow > lowerRightRow || upperLeftColumn > lowerRightColumn){
 				return false;
 			}
+			
 			return true;
 		} catch (NumberFormatException inValidRange) {
 			return false;
@@ -111,6 +115,7 @@ public class CellCommands {
 					}
 				}
 				
+				//defaults cell to 0
 				if (!refered){
 					CellData.spreadSheet[column][row] = new Cell("0.0", 2);
 					CellData.spreadSheet[column][row].address = address;
@@ -336,6 +341,8 @@ public class CellCommands {
 			int column = Integer.parseInt(dimensions.substring(dimensions.indexOf('X') + 1));
 			
 			int numTest = row * column;
+			
+			//determines if any of the user specified dimensions is negative or 0
 			if (numTest <= 0) {
 				Exception exception = new Exception(); 
 				throw exception;
@@ -360,6 +367,7 @@ public class CellCommands {
 				int row = Integer.parseInt(lineToCheck.substring(1,
 						lineToCheck.indexOf(':'))) - 1;
 
+				// checks that the line follows the import format
 				if (lineToCheck.length() < 5) {
 					isValid = false;
 				} else if (lineToCheck.indexOf(':') != 2
@@ -396,8 +404,10 @@ public class CellCommands {
 		try {
 			s = new Scanner(f);
 			while (s.hasNextLine()) {
+				//sends command to be processed
 				String Command = s.nextLine().trim();
 				
+				//converts curly quotes to straight quotes
 				for (int i = 0; i < Command.length(); i++){
 					int idx = Command.charAt(i);
 					if (idx == 8220 || idx == 8221) {
@@ -407,6 +417,7 @@ public class CellCommands {
 					}
 				}
 				
+				//prints out user command
 				System.out.println("Command <" + Command + ">");
 				Main.commandProcessing(Command);
 				Main.printErrorMessage();
@@ -446,6 +457,7 @@ public class CellCommands {
 	}
 
 	public static void showCell(String Address) {
+		// shows contents of cell
 		try {
 			int column = Address.charAt(0) - 65;
 			int row = Address.charAt(1) - 49;
@@ -533,6 +545,7 @@ public class CellCommands {
 	}
 
 	public static void createNewArray(String s){
+		//gets dimensions of new array
 		int row = 0;
 		int column = 0;
 		try {
@@ -560,6 +573,7 @@ public class CellCommands {
 					}
 				}
 		
+		//determines range of data to copy
 		int tempRow;
 		if (row > CellData.spreadSheet.length) {
 			tempRow = CellData.spreadSheet.length;
@@ -574,6 +588,7 @@ public class CellCommands {
 			tempColumn = column;
 		}
 
+		//copies data
 		for (int i = 0; i <= tempRow - 1; i++) {
 			for (int k = 0; k <= tempColumn - 1; k++) {
 				char letter = (char) (k + 65);
@@ -589,6 +604,7 @@ public class CellCommands {
 			}
 		}
 		
+		//copies data
 		CellData.spreadSheet = CellData.spreadSheetCopy;
 		PrintCells.rows = row;
 		PrintCells.columns = column;

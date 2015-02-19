@@ -80,10 +80,15 @@ public class Formula {
 	}
 	
 	public boolean checkReferences() {
+		//this method makes the check method take the cells address
 		return check(previousCellAddress);
 	}
 	
 	public boolean check(String address) {
+		//checks for specified reference
+		//useful to check for circular reference
+		
+		//checks to see it an current reference matches address
 		boolean isValid = true;
 		for (int i = 0; i < references.size(); i++) {
 			if (references.get(i).equals(address)){
@@ -91,8 +96,15 @@ public class Formula {
 			}
 		}
 		
+		//if reference is another formula, checks those references also
 		for (int i = 0; i < references.size(); i++)  {
 			String reference = references.get(i);
+			
+			//determine if address is valid
+			if (!CellCommands.checkRange("A1", reference)) {
+				return false;
+			}
+			
 			int column = reference.charAt(0) - 65;
 			int row = reference.charAt(1) - 49;
 			

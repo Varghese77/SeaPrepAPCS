@@ -15,7 +15,7 @@ public class Cell {
 	/*determines what data to display
 	 * 1 = String (default)
 	 * 2 = real number
-	 * 2 = Date
+	 * 3 = Date
 	 * 4 = Formula
 	 */
 	
