@@ -1,4 +1,4 @@
-public class chapterOneQuestions {
+public class Chapter1Questions {
 	
 	/*
 	Chapter One Exercises
