@@ -1,4 +1,29 @@
-Set 1:
-	1. SimpleMBSDemo2 initializes its own fish objects and an environment. The step method then has an array of all the fish whose location is in the environment and then processes them. The environment instance reference is stored in each instance of the fish objects which are then called in the step method when it calls environment.  
-	2. Demo1 doesn't use a simulation object while demo2 does. 
-Set 2:
+Analysis Question Set 1:
+	1. SimpleMBSDemo2 initializes its own fish objects and links them to an environment. Then SimpleMBSDemo2 initializes a Simulation 
+	   object that references the same environment. The environment interface has an allObjects() method that returns an array of locatables 
+	   to the simulation and because objects in arrays are references the simulation object can act upon the fish objects and afterwards the display 
+	   will reflect the new updates to the fish objects. 
+	2. Demo1 doesn't use a simulation object while demo2 does. This means
+	
+Analysis Question Set 2: 
+	1. The returned locations would be (7,2), (7,4), (8,3), and (6,3).
+	2. The value of dir1 should be East.
+	3. The value of dir2 should be South and the value of dir3 should be North. 
+	4. loc3 refers to location (6,3). 
+	5. loc4 refers to location (5,3). 
+	6. The Direction class has three constructors, one with no parameters, one that takes a direction in degrees 
+	   and one that takes the direction from string form. The other methods not used that the Direction class has(in the form 
+	   return type, name(parameters)) is int inDegrees(), boolean Equals() , Direction toRight(), Direction toRight(int degrees), 
+	   Direction toLeft(), Direction toLeft(int degrees), Direction reverse(), Direction randomDIrection(), int hashCode(), 
+	   and Direction roundedDir(int numDirections, Direction startingDir). The Location Class has one constructor which takes 
+	   two integers as parameters, the first representing the row and the second representing the column. The other methods not used 
+	   in the Location class are int row(), int column(), boolean equals(Object other), int CompareTo(Object other), String toString(),  
+	   and int hashCode(). The toString methods in both of these classes could be used to get information in the form of a string to
+	   be displayed so that the user can automatically get information about the direction of a fish and its location in an easy way
+	   assuming the user didn't know the inner structure of the code. The ToRight method adds a certain amount of degrees to the direction 
+	   that it is called on, either by 90 if no parameters are passed or by the amount passed as a parameter. the toLeft does the exact 
+	   same thing except subtracting degrees instead of adding them. 
+Exercise Set 1:
+	1. Driver (Main Class) created. 
+	2. the constant NORTH is represented by 0 degrees, EAST is represented by 90 degrees, SOUTH is represented by 180 degrees, and WEST is represented by 270 degrees. 
+	   The value of dir3 in degrees is 0 because it is North.  

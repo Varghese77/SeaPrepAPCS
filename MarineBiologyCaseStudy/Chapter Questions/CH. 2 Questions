@@ -1,4 +1,0 @@
-Set 1:
-	1. SimpleMBSDemo2 initializes its own fish objects and an environment. The step method then has an array of all the fish whose location is in the environment and then processes them. The environment instance reference is stored in each instance of the fish objects which are then called in the step method when it calls environment.  
-	2. Demo1 doesn't use a simulation object while demo2 does. 
-Set 2:
