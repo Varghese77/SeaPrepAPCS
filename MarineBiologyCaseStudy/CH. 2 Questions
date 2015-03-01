@@ -3,7 +3,8 @@ Analysis Question Set 1:
 	   object that references the same environment. The environment interface has an allObjects() method that returns an array of locatables 
 	   to the simulation and because objects in arrays are references the simulation object can act upon the fish objects and afterwards the display 
 	   will reflect the new updates to the fish objects. 
-	2. Demo1 doesn't use a simulation object while demo2 does. This means
+	2. Demo1 doesn't use a simulation object while demo2 does. This means that Demo1 makes the fish directly while Demo2 
+	   refers to the simulation object to update the fish in timesteps. 
 	
 Analysis Question Set 2: 
 	1. The returned locations would be (7,2), (7,4), (8,3), and (6,3).
