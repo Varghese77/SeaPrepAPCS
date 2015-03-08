@@ -1,0 +1,33 @@
+Roy Mathew
+Chapter Two Part Two
+
+Analysis Questions Set 3:
+	1. env.numOfObjects() should return a value of 2.
+	2. env.allObjects() should return a Locatable array of containing f1 & f2. Mine returns 2(2, 6)South and 1(7, 2)East.
+	3. env.isEmpty(loc1) should return a value of false.
+	4. env.isEmpty(loc3) should return a value of true.
+	5. env.objectAt(loc2) should return which is represented by the string 2(2, 6)South.
+	6. env.objectAt(loc2) should return null.
+	7. It doesn't makes sense to have an add() method because the fish ‘s initialize method directly references
+	the environment object passed to it. An add method would only make sense if the two objects weren’t linked from the start. 
+	8. If the initialize method was public, then user-created client code would be able to change the behavior 
+	of the fish mid program and thus it thus the fish would no longer properly imitate fish behavior. Having the method be public locks the fish's behavior patterns the  moment it is created.
+	9. theEnv could be a class variable however this will limit the number of total simulations to one at a time. Making it an instance object will give the use greater freedom and doing so has no drawbacks. 
+Exercise Questions Set 2:
+	1. Created (/MarineBiologyCaseStudy/src/Chapter2_Ex_2_1.java)
+	2. Updated(/MarineBiologyCaseStudy/src/Chapter2_Ex_2_1.java). The program does behave as expected because once the fish object is removed the isEmpty method declares the square empty, as there is no object assigned to that square. 
+	3. Giving env a new fish with the add method throws an IllegalArgumentException because when the new fish is initialized, it automatically places the fish in the said location, thus the code is trying to put the same fish in the same location twice.
+Analysis Questions Set 4:
+	1. When a fish object is initialized, it is added to the environment object it was given and as a result both objects are interacting with each other in a consistent state because an update to the fish object reflects in the environment object as the environment object calls upon the fish object. In other words as soon as the fish object is 	initialized both the fish and the environment start in a consistent state. 
+	2. If a fish object is removed from an environment object, (after the program starts) but isn’t terminated from memory then the fish could get out of sync and into an inconsistent state because the fish keeps track of its own location and thus the fish will still think it is in a particular location when the environment no longer refers to that fish. To test this I removed Fish f4 from the BoundedEnv I created earlier, yet f4.act() still works. 
+Analysis Question Set 5:
+	* The first case tests if the references are the same, the second tests if the actual location is a clone. 
+	1. true, true
+	2. false, false
+	3. false, true
+Analysis Question Set 6:
+	1. The Fish class needs an emptyNeighbors method because the neighborsOf method returns every neighbor location, not just those that are empty. The emptyNeighbors method makes the code simpler and keeps every method to doing one thing only. 
+Exercise Set Three:
+	1. Modified! Around (0,0) there are two neighbors. Around (0,1) there are three neighbors. Around (1,1) there are four neighbors.
+	2. The neighbors of (0,0) are (0, 1) and (1, 0). The neighbors of (0,1) are (0, 2), (1, 1), (0, 0). The neighbors of (1,1) are (0, 1), (1, 2), (2, 1), (1, 0).
+	3. (19,19) (or any corner square) will have two neighbors. (19,18) (or any square on the side) will have three neighbors. (18,18) (or any square not in the rim) will have four neighbors. 

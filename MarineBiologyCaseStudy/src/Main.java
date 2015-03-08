@@ -15,7 +15,8 @@ public class Main{
 		Location loc3 = env.getNeighbor(loc1, dir3);
 		Location loc4 = env.getNeighbor(new Location(5,2), dir1);
 		
-		System.out.println(loc1);
+		
+		System.out.println(env.numObjects());
 		System.out.println(loc2);
 		System.out.println(dir1);
 		System.out.println(dir2);

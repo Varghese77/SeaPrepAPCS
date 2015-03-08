@@ -43,7 +43,7 @@ public class SimpleMBSDemo1
     private static final int NUM_STEPS = 15000;     // number of timesteps
 
     // Specify the time delay for each step
-    private static final int DELAY = 100;        // delay in milliseconds
+    private static final int DELAY = 1000;        // delay in milliseconds
 
     /** Start the Marine Biology Simulation program.
      *  The String arguments (args) are not used in this application.
@@ -53,6 +53,7 @@ public class SimpleMBSDemo1
         // Construct an empty environment and several fish in the context
         // of that environment.
         BoundedEnv env = new BoundedEnv(ENV_ROWS, ENV_COLS);
+        
         Fish f1 = new Fish(env, new Location(2, 2));
         Fish f2 = new Fish(env, new Location(2, 3));
         Fish f3 = new Fish(env, new Location(5, 8));
@@ -67,7 +68,7 @@ public class SimpleMBSDemo1
         {
             f1.act();
             f2.act();
-           f3.act();
+            f3.act();
             display.showEnv();
         }
     }
