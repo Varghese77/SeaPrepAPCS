@@ -1,0 +1,7 @@
+bounded 12 12
+Fish 1 1 South
+Fish 3 11 North
+Fish 4 0 South
+Fish 8 0 West
+Fish 8 8 West
+Fish 10 10 North

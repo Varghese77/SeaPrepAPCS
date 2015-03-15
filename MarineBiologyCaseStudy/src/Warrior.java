@@ -1,113 +1,45 @@
-// AP(r) Computer Science Marine Biology Simulation:
-// The Fish class is copyright(c) 2002 College Entrance
-// Examination Board (www.collegeboard.com).
-//
-// This class is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation.
-//
-// This class is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- *  AP&reg; Computer Science Marine Biology Simulation:<br>
- *  A <code>Fish</code> object represents a fish in the Marine Biology
- *  Simulation. Each fish has a unique ID, which remains constant
- *  throughout its life.  A fish also maintains information about its
- *  location and direction in the environment.
- *
- *  <p>
- *  The <code>Fish</code> class is
- *  copyright&copy; 2002 College Entrance Examination Board
- *  (www.collegeboard.com).
- *
- *  @author Alyce Brady
- *  @author APCS Development Committee
- *  @version 1 July 2002
- *  @see Environment
- *  @see Direction
- *  @see Location
- **/
-
-public class Fish implements Locatable
+public class Warrior implements Locatable
 {
     // Class Variable: Shared among ALL fish
-    private static int nextAvailableID = 1;   // next avail unique identifier
+    private static int WarriorID = 1;   // next avail unique identifier
 
     // Instance Variables: Encapsulated data for EACH fish
     private Environment theEnv;        // environment in which the fish lives
     private int myId;                  // unique ID for this fish
     private Location myLoc;            // fish's location
     private Direction myDir;           // fish's direction
-    private Color myColor;             // fish's color
+
 
 
   // constructors and related helper methods
 
-    /** Constructs a fish at the specified location in a given environment.
-     *  The Fish is assigned a random direction and random color.
-     *  (Precondition: parameters are non-null; <code>loc</code> is valid
-     *  for <code>env</code>.)
-     *  @param env    environment in which fish will live
-     *  @param loc    location of the new fish in <code>env</code>
-     **/
-    
-    
-    public Fish(Environment env, Location loc)
+    public Warrior(Environment env, Location loc)
     {
         initialize(env, loc, env.randomDirection(), randomColor());
     }
 
-    /** Constructs a fish at the specified location and direction in a
-     *  given environment.  The Fish is assigned a random color.
-     *  (Precondition: parameters are non-null; <code>loc</code> is valid
-     *  for <code>env</code>.)
-     *  @param env    environment in which fish will live
-     *  @param loc    location of the new fish in <code>env</code>
-     *  @param dir    direction the new fish is facing
-     **/
-    public Fish(Environment env, Location loc, Direction dir)
+    public Warrior(Environment env, Location loc, Direction dir)
     {
         initialize(env, loc, dir, randomColor());
     }
 
-    /** Constructs a fish of the specified color at the specified location
-     *  and direction.
-     *  (Precondition: parameters are non-null; <code>loc</code> is valid
-     *  for <code>env</code>.)
-     *  @param env    environment in which fish will live
-     *  @param loc    location of the new fish in <code>env</code>
-     *  @param dir    direction the new fish is facing
-     *  @param col    color of the new fish
-     **/
-    public Fish(Environment env, Location loc, Direction dir, Color col)
+    public Warrior(Environment env, Location loc, Direction dir, Color col)
     {
         initialize(env, loc, dir, col);
     }
 
-    /** Initializes the state of this fish.
-     *  (Precondition: parameters are non-null; <code>loc</code> is valid
-     *  for <code>env</code>.)
-     *  @param env    environment in which this fish will live
-     *  @param loc    location of this fish in <code>env</code>
-     *  @param dir    direction this fish is facing
-     *  @param col    color of this fish
-     **/
     private void initialize(Environment env, Location loc, Direction dir,
                             Color col)
     {
         theEnv = env;
-        myId = nextAvailableID;
-        nextAvailableID++;
+        myId = WarriorID;
+        WarriorID++;
         myLoc = loc;
         myDir = dir;
-        myColor = col;
         theEnv.add(this);
 
         // object is at location myLoc in environment
@@ -127,64 +59,33 @@ public class Fish implements Locatable
     }
 
 
-    public void changeColor (Color newColor){
-    	myColor = newColor;
-    }
-    
   // accessor methods
 
-    /** Returns this fish's ID.
-     *  @return        the unique ID for this fish
-     **/
     public int id()
     {
         return myId;
     }
 
-    /** Returns this fish's environment.
-     *  @return        the environment in which this fish lives
-     **/
     public Environment environment()
     {
         return theEnv;
     }
 
-    /** Returns this fish's color.
-     *  @return        the color of this fish
-     **/
-    public Color color()
-    {
-        return myColor;
-    }
-
-    /** Returns this fish's location.
-     *  @return        the location of this fish in the environment
-     **/
     public Location location()
     {
         return myLoc;
     }
 
-    /** Returns this fish's direction.
-     *  @return        the direction in which this fish is facing
-     **/
     public Direction direction()
     {
         return myDir;
     }
 
-    /** Checks whether this fish is in an environment.
-     *  @return  <code>true</code> if the fish is in the environment
-     *           (and at the correct location); <code>false</code> otherwise
-     **/
     public boolean isInEnv()
     {
         return environment().objectAt(location()) == this;
     }
 
-    /** Returns a string representing key information about this fish.
-     *  @return  a string indicating the fish's ID, location, and direction
-     **/
     public String toString()
     {
         return id() + location().toString() + direction().toString();
@@ -193,8 +94,6 @@ public class Fish implements Locatable
 
   // modifier method
 
-    /** Acts for one step in the simulation.
-     **/
     public void act()
     {
         // Make sure fish is alive and well in the environment -- fish
@@ -206,8 +105,7 @@ public class Fish implements Locatable
 
   // internal helper methods
 
-    /** Moves this fish in its environment.
-     **/
+
     protected void move()
     {
         // Find a location to move to.
@@ -230,12 +128,6 @@ public class Fish implements Locatable
             Debug.println("  Does not move.");
     }
 
-    /** Finds this fish's next location.
-     *  A fish may move to any empty adjacent locations except the one
-     *  behind it (fish do not move backwards).  If this fish cannot
-     *  move, <code>nextLocation</code> returns its current location.
-     *  @return    the next location for this fish
-     **/
     protected Location nextLocation()
     {
         // Get list of neighboring empty locations.
@@ -258,9 +150,6 @@ public class Fish implements Locatable
 	    return (Location) emptyNbrs.get(randNum);
     }
 
-    /** Finds empty locations adjacent to this fish.
-     *  @return    an ArrayList containing neighboring empty locations
-     **/
     protected ArrayList emptyNeighbors()
     {
         // Get all the neighbors of this fish, empty or not.
