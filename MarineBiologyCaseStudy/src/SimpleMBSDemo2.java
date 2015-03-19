@@ -71,6 +71,9 @@ public class SimpleMBSDemo2
         for ( int i = 0; i < NUM_STEPS; i++ )
         {
             sim.step();
+            
+            
+            /* for last part of Ch. 2
             if (i % 2 == 0) {
             	f1.changeColor(Color.red);
             	f2.changeColor(Color.blue);
@@ -80,6 +83,7 @@ public class SimpleMBSDemo2
             	f2.changeColor(Color.white);
             	f3.changeColor(Color.yellow);
             }
+            */
         }
     }
 }

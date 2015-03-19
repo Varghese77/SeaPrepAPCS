@@ -1,3 +1,4 @@
+package OldFiles;
 // AP(r) Computer Science Marine Biology Simulation:
 // The Fish class is copyright(c) 2002 College Entrance
 // Examination Board (www.collegeboard.com).
@@ -23,11 +24,6 @@ import java.util.Random;
  *  location and direction in the environment.
  *
  *  <p>
- *  Modification History:
- *  - Modified to support a dynamic population in the environment:
- *    fish can now breed and die.
- *
- *  <p>
  *  The <code>Fish</code> class is
  *  copyright&copy; 2002 College Entrance Examination Board
  *  (www.collegeboard.com).
@@ -51,9 +47,6 @@ public class Fish implements Locatable
     private Location myLoc;            // fish's location
     private Direction myDir;           // fish's direction
     private Color myColor;             // fish's color
-// THE FOLLOWING TWO INSTANCE VARIABLES ARE NEW IN CHAPTER 3 !!!
-    private double probOfBreeding;     // defines likelihood in each timestep
-    private double probOfDying;        // defines likelihood in each timestep
 
 
   // constructors and related helper methods
@@ -65,6 +58,8 @@ public class Fish implements Locatable
      *  @param env    environment in which fish will live
      *  @param loc    location of the new fish in <code>env</code>
      **/
+    
+    
     public Fish(Environment env, Location loc)
     {
         initialize(env, loc, env.randomDirection(), randomColor());
@@ -117,12 +112,6 @@ public class Fish implements Locatable
         theEnv.add(this);
 
         // object is at location myLoc in environment
-
-// THE FOLLOWING CODE IS NEW IN CHAPTER 3 !!!
-        // For now, every fish is equally likely to breed or die in any given
-        // timestep, although this could be individualized for each fish.
-        probOfBreeding = 1.0/7.0;   // 1 in 7 chance in each timestep
-        probOfDying = 1.0/5.0;      // 1 in 5 chance in each timestep
     }
 
     /** Generates a random color.
@@ -139,6 +128,10 @@ public class Fish implements Locatable
     }
 
 
+    public void changeColor (Color newColor){
+    	myColor = newColor;
+    }
+    
   // accessor methods
 
     /** Returns this fish's ID.
@@ -201,77 +194,18 @@ public class Fish implements Locatable
 
   // modifier method
 
-// THE FOLLOWING METHOD IS MODIFIED FOR CHAPTER 3 !!!
-//       (was originally a check for aliveness and a simple call to move)
     /** Acts for one step in the simulation.
      **/
     public void act()
     {
         // Make sure fish is alive and well in the environment -- fish
         // that have been removed from the environment shouldn't act.
-        if ( ! isInEnv() )
-            return;
-
-        // Try to breed.
-        if ( ! breed() )
-            // Did not breed, so try to move.
+        if ( isInEnv() ) 
             move();
-
-        // Determine whether this fish will die in this timestep.
-        Random randNumGen = RandNumGenerator.getInstance();
-        if ( randNumGen.nextDouble() < probOfDying )
-            die();
     }
 
 
   // internal helper methods
-
-// THE FOLLOWING METHOD IS NEW FOR CHAPTER 3 !!!
-    /** Attempts to breed into neighboring locations.
-     *  @return    <code>true</code> if fish successfully breeds;
-     *             <code>false</code> otherwise
-     **/
-    protected boolean breed()
-    {
-        // Determine whether this fish will try to breed in this
-        // timestep.  If not, return immediately.
-        Random randNumGen = RandNumGenerator.getInstance();
-        if ( randNumGen.nextDouble() >= probOfBreeding )
-            return false;
-
-        // Get list of neighboring empty locations.
-        ArrayList emptyNbrs = emptyNeighbors();
-        Debug.print("Fish " + toString() + " attempting to breed.  ");
-        Debug.println("Has neighboring locations: " + emptyNbrs.toString());
-
-        // If there is nowhere to breed, then we're done.
-        if ( emptyNbrs.size() == 0 )
-        {
-            Debug.println("  Did not breed.");
-            return false;
-        }
-
-        // Breed to all of the empty neighboring locations.
-        for ( int index = 0; index < emptyNbrs.size(); index++ )
-        {
-            Location loc = (Location) emptyNbrs.get(index);
-            generateChild(loc);
-        }
-
-        return true;
-    }
-
-// THE FOLLOWING METHOD IS NEW FOR CHAPTER 3 !!!
-    /** Creates a new fish with the color of its parent.
-     *  @param loc    location of the new fish
-     **/
-    protected void generateChild(Location loc)
-    {
-        // Create new fish, which adds itself to the environment.
-        Fish child = new Fish(environment(), loc,
-                              environment().randomDirection(), color());
-        Debug.println("  New Fish created: " + child.toString());
-    }
 
     /** Moves this fish in its environment.
      **/
@@ -365,15 +299,6 @@ public class Fish implements Locatable
     {
         // Change direction.
         myDir = newDir;
-    }
-
-// THE FOLLOWING METHOD IS NEW FOR CHAPTER 3 !!!
-    /** Removes this fish from the environment.
-     **/
-    protected void die()
-    {
-        Debug.println(toString() + " about to die.");
-        environment().remove(this);
     }
 
 }
