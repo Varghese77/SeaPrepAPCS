@@ -54,6 +54,8 @@ public class Fish implements Locatable
 // THE FOLLOWING TWO INSTANCE VARIABLES ARE NEW IN CHAPTER 3 !!!
     private double probOfBreeding;     // defines likelihood in each timestep
     private double probOfDying;        // defines likelihood in each timestep
+    private int numOfTimesBred;
+    private int age;
 
 
   // constructors and related helper methods
@@ -65,9 +67,13 @@ public class Fish implements Locatable
      *  @param env    environment in which fish will live
      *  @param loc    location of the new fish in <code>env</code>
      **/
+    public Fish(Environment env, Location loc, double death, double children) {
+    	initialize(env, loc, env.randomDirection(), randomColor(), death, children);
+    }
+    
     public Fish(Environment env, Location loc)
     {
-        initialize(env, loc, env.randomDirection(), randomColor());
+        initialize(env, loc, env.randomDirection(), randomColor(), (1.0/5.0), (1.0/7.0));
     }
 
     /** Constructs a fish at the specified location and direction in a
@@ -80,7 +86,7 @@ public class Fish implements Locatable
      **/
     public Fish(Environment env, Location loc, Direction dir)
     {
-        initialize(env, loc, dir, randomColor());
+        initialize(env, loc, dir, randomColor(), (1.0/5.0), (1.0/7.0));
     }
 
     /** Constructs a fish of the specified color at the specified location
@@ -94,7 +100,7 @@ public class Fish implements Locatable
      **/
     public Fish(Environment env, Location loc, Direction dir, Color col)
     {
-        initialize(env, loc, dir, col);
+        initialize(env, loc, dir, col, (1.0/5.0), (1.0/7.0));
     }
 
     /** Initializes the state of this fish.
@@ -106,7 +112,7 @@ public class Fish implements Locatable
      *  @param col    color of this fish
      **/
     private void initialize(Environment env, Location loc, Direction dir,
-                            Color col)
+                            Color col, double death, double children)
     {
         theEnv = env;
         myId = nextAvailableID;
@@ -114,15 +120,13 @@ public class Fish implements Locatable
         myLoc = loc;
         myDir = dir;
         myColor = col;
-        theEnv.add(this);
-
-        // object is at location myLoc in environment
-
-// THE FOLLOWING CODE IS NEW IN CHAPTER 3 !!!
-        // For now, every fish is equally likely to breed or die in any given
-        // timestep, although this could be individualized for each fish.
-        probOfBreeding = 1.0/7.0;   // 1 in 7 chance in each timestep
-        probOfDying = 1.0/5.0;      // 1 in 5 chance in each timestep
+        theEnv.add(this);   
+        numOfTimesBred = 0;
+        age = 0;
+        
+        // the following updates are for Ch. 3 Ex. Set 1 Q 8
+        probOfBreeding = (1.0/3.0);   
+        probOfDying = 0; // is set to 0 b/c act method will update it to 0.1 on its first move
     }
 
     /** Generates a random color.
@@ -136,7 +140,8 @@ public class Fish implements Locatable
         return new Color(randNumGen.nextInt(256),    // amount of red
                          randNumGen.nextInt(256),    // amount of green
                          randNumGen.nextInt(256));   // amount of blue
-    }
+    }// amount of blue
+
 
 
   // accessor methods
@@ -207,6 +212,10 @@ public class Fish implements Locatable
      **/
     public void act()
     {
+    	// Ch.3 Ex. set 1 Q. 8 update
+    	probOfDying += 0.1;
+    	
+    	age++;
         // Make sure fish is alive and well in the environment -- fish
         // that have been removed from the environment shouldn't act.
         if ( ! isInEnv() )
@@ -233,6 +242,9 @@ public class Fish implements Locatable
      **/
     protected boolean breed()
     {
+    	// For CH.3 Ex. Set 1 Q 8
+    	if (age < 3)
+    		return false;
         // Determine whether this fish will try to breed in this
         // timestep.  If not, return immediately.
         Random randNumGen = RandNumGenerator.getInstance();
@@ -257,7 +269,9 @@ public class Fish implements Locatable
             Location loc = (Location) emptyNbrs.get(index);
             generateChild(loc);
         }
-
+        
+        //chapter 3 
+        numOfTimesBred++;
         return true;
     }
 
@@ -268,8 +282,16 @@ public class Fish implements Locatable
     protected void generateChild(Location loc)
     {
         // Create new fish, which adds itself to the environment.
+    	
+    	//Exercise set 1 Question 3
+    	int red = (int) (Math.random() * 256);
+    	int green = (int) (Math.random() * 256);
+    	int blue = (int) (Math.random() * 256);
+    	
+    	Color randColor = new Color(red, green, blue);
+    	
         Fish child = new Fish(environment(), loc,
-                              environment().randomDirection(), color());
+                              environment().randomDirection(), randColor);
         Debug.println("  New Fish created: " + child.toString());
     }
 
@@ -373,7 +395,9 @@ public class Fish implements Locatable
     protected void die()
     {
         Debug.println(toString() + " about to die.");
+        Debug.println(toString() + " 's children: " + numOfTimesBred);
         environment().remove(this);
+        Debug.println("Fish's age: " + age);
     }
 
 }

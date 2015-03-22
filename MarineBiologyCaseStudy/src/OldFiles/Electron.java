@@ -1,7 +1,13 @@
+package OldFiles;
 // This locatable is from Roy Mathew and Chris Jellen
 // It will utilise a new hex-grid environment that will be created later
 // and it also invokes some methods from that environment. 
-// *locatables use axial coordinates rather than cartesian coordinates. 
+// *locatables use axial coordinates rather than cartesian coordinates
+import Debug;
+import Environment;
+import Locatable;
+import Location;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Random;

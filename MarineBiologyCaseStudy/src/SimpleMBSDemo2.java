@@ -41,7 +41,7 @@ public class SimpleMBSDemo2
     private static final int ENV_COLS = 10;      // columns in environment
 
     // Specify how many timesteps to run the simulation.
-    private static final int NUM_STEPS = 15;     // number of timesteps
+    private static final int NUM_STEPS = 20;     // number of timesteps
 
     // Specify the time delay for each step
     private static final int DELAY = 1000;        // delay in milliseconds
@@ -58,6 +58,10 @@ public class SimpleMBSDemo2
         Fish f1 = new Fish(env, new Location(2, 2), dir1, Color.red);
         Fish f2 = new Fish(env, new Location(2, 3), dir1.reverse(), Color.blue);
         Fish f3 = new Fish(env, new Location(5, 8), dir1.toRight(), Color.magenta);
+        
+        //for Chapter 3!
+        Fish f4 = new Fish(env, new Location(9,5), 0.05, 0.1);
+        Fish f5 = new Fish(env, new Location(7,4), (1/3), (1/4));
 
         // Construct an object that knows how to draw the environment with
         // a delay.
