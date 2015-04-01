@@ -38,13 +38,6 @@ public class HexEnv extends JFrame implements Environment {
 		updateGrid();
 		setLayout(null); 
 		setVisible(true); 
-		
-		for (int i = 0; i < allLocations.size(); i++){
-			System.out.println(allLocations.get(i).toString());
-		}
-		
-		System.out.print(allLocations.size());
-
 	} 
 	
 	public ArrayList<Location> validLocations() {
