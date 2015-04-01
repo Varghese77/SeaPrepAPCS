@@ -272,7 +272,7 @@ public class HexEnv extends JFrame implements Environment {
                 g.setColor(Color.GREEN);
                 g.fillOval((HEX_WIDTH / 10) + border, (HEX_HEIGHT / 10) + border, (3 *HEX_WIDTH / 4) - (2 * border), (4 * HEX_HEIGHT / 5) - 2 * border);
             }
-        } ;
+        };
         
         Electron.setBounds(0, 0, HEX_WIDTH, HEX_HEIGHT);
         Electron.setVisible(true);

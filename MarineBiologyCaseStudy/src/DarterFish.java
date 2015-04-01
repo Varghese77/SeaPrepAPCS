@@ -158,4 +158,11 @@ public class DarterFish extends Fish
         return location();
     }
 
+    
+    //Chapter 4 Exercise Set 1 Question 5
+    
+    public String toString()
+    {
+        return "Darter Fish " + id() + location().toString() + direction().toString();
+    }
 }

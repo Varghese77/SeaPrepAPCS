@@ -60,8 +60,8 @@ public class SimpleMBSDemo2
         Fish f3 = new Fish(env, new Location(5, 8), dir1.toRight(), Color.magenta);
         
         //for Chapter 3!
-        Fish f4 = new Fish(env, new Location(9,5), 0.05, 0.1);
-        Fish f5 = new Fish(env, new Location(7,4), (1/3), (1/4));
+        Fish f4 = new Fish(env, new Location(9,5));
+        Fish f5 = new Fish(env, new Location(7,4));
 
         // Construct an object that knows how to draw the environment with
         // a delay.

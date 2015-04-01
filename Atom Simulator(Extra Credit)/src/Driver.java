@@ -18,8 +18,7 @@ public class Driver {
 				Electron e6 = new Electron(f);
 				Electron e7 = new Electron(f);
 				Electron e8 = new Electron(f);
-				//f.add(new Electron(f));
-				//f.remove(e1);
+
 			while(command != "quit"){
 				try {
 					TimeUnit.MILLISECONDS.sleep(500);

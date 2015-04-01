@@ -132,5 +132,22 @@ public class SlowFish extends Fish
             return location();
         }
     }
+    
+ // Chapter 4 Exercise Set 2 Question 6
+    public void changeDirection(){
+    	Random randNumGen = RandNumGenerator.getInstance();
+    	if ( randNumGen.nextDouble() < 0.25 ){
+    		if (randNumGen.nextDouble() > 0.5){
+    			super.changeDirection(super.direction().toLeft());
+    		} else {
+    			super.changeDirection(super.direction().toRight());
+    		}
+    	}
+    }
+    // Chapter 4 Exercise Set 2 Question 3
+    public String toString()
+    {
+        return "Slow Fish " + id() + location().toString() + direction().toString();
+    }
 
 }
