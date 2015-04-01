@@ -10,8 +10,10 @@ import javax.swing.JLayeredPane;
 
 public class HexEnv extends JFrame implements Environment {
 	
+	private static final long serialVersionUID = 1L;
 	private JLayeredPane[][] grid;
-	ArrayList<Location> validLocations = new ArrayList<Location>();
+	public ArrayList<Location> allLocations = new ArrayList<Location>();
+	
 	public ArrayList<Electron> Electrons = new ArrayList<Electron>();
 	private int border = 1;
 	
@@ -31,16 +33,69 @@ public class HexEnv extends JFrame implements Environment {
 
 		setSize(2 * radius * HEX_WIDTH, 2 * radius * HEX_HEIGHT + 2 * HEX_HEIGHT); 
 		createBoundedEnv();
+		createElectronShell(radius);
 		createNucleus();
 		updateGrid();
-		setLayout(null); //no layout manager  
-		setVisible(true); //now frame will be visible, by default not visible  
-		createElectronShell(radius);
-		for (int i = 0; i < validLocations.size(); i++){
-			System.out.println(validLocations.get(i).toString());
+		setLayout(null); 
+		setVisible(true); 
+		
+		for (int i = 0; i < allLocations.size(); i++){
+			System.out.println(allLocations.get(i).toString());
 		}
-		System.out.print(validLocations.size());
+		
+		System.out.print(allLocations.size());
+
 	} 
+	
+	public ArrayList<Location> validLocations() {
+		ArrayList<Location> validLocations = new ArrayList<Location>();
+		
+		validLocations = (ArrayList<Location>) allLocations.clone();
+		
+		for (int i = 0; i <  Electrons.size(); i++){
+			
+			Location eLoc = Electrons.get(i).location();
+			Location tempLoc = new Location(eLoc.x, eLoc.y);
+			
+			removeLocationFromLocationArrayList(validLocations, tempLoc);
+			tempLoc = Direction.North(tempLoc);
+			
+			removeLocationFromLocationArrayList(validLocations, tempLoc);
+			tempLoc = new Location(eLoc.x, eLoc.y);
+			
+			tempLoc = Direction.NorthEast(tempLoc);
+			removeLocationFromLocationArrayList(validLocations, tempLoc);
+			tempLoc = new Location(eLoc.x, eLoc.y);
+			
+			tempLoc = Direction.NorthWest(tempLoc);
+			removeLocationFromLocationArrayList(validLocations, tempLoc);
+			tempLoc = new Location(eLoc.x, eLoc.y);
+			
+			tempLoc = Direction.South(tempLoc);
+			removeLocationFromLocationArrayList(validLocations, tempLoc);
+			tempLoc = new Location(eLoc.x, eLoc.y);
+			
+			tempLoc = Direction.SouthWest(tempLoc);
+			removeLocationFromLocationArrayList(validLocations, tempLoc);
+			tempLoc = new Location(eLoc.x, eLoc.y);
+			
+			tempLoc = Direction.SouthEast(tempLoc);
+			removeLocationFromLocationArrayList(validLocations, tempLoc);
+		}
+		
+		return validLocations;
+		
+	};
+	
+	
+	public void removeLocationFromLocationArrayList(ArrayList<Location> validLocations, Location loc){
+		for (int i = 0; i < validLocations.size(); i++){
+			Location compLoc = validLocations.get(i);
+			if (compLoc.equals(loc)){
+				validLocations.remove(i);
+			}
+		}
+	}
 	
 	public void createElectronShell(int radius) {
 		for (int i = 1; i <= radius; i++){
@@ -61,120 +116,42 @@ public class HexEnv extends JFrame implements Environment {
 		}
 		
 		colorTile(currentTile);
-		validLocations.add(new Location(currentTile.x, currentTile.y));
+		allLocations.add(new Location(currentTile.x, currentTile.y));
 		
 		for (int i = 0; i < d; i++){
 			currentTile = Direction.SouthEast(currentTile);
 			colorTile(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
+			allLocations.add(new Location(currentTile.x, currentTile.y));
 		}
 		
 		for (int i = 0; i < d; i++){
 			currentTile = Direction.NorthEast(currentTile);
 			colorTile(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
+			allLocations.add(new Location(currentTile.x, currentTile.y));
 		}
 		
 		for (int i = 0; i < d; i++){
 			currentTile = Direction.North(currentTile);
 			colorTile(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
+			allLocations.add(new Location(currentTile.x, currentTile.y));
 		}
 		
 		for (int i = 0; i < d; i++){
 			currentTile = Direction.NorthWest(currentTile);
 			colorTile(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
+			allLocations.add(new Location(currentTile.x, currentTile.y));
 		}
 		
 		for (int i = 0; i < d; i++){
 			currentTile = Direction.SouthWest(currentTile);
 			colorTile(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
+			allLocations.add(new Location(currentTile.x, currentTile.y));
 		}
 		
 		for (int i = 0; i < d - 1; i++){
 			currentTile = Direction.South(currentTile);
 			colorTile(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
-		}
-	}
-	
-	public void refreshDisplay(){
-		
-		for (int i = 0; i < validLocations.size(); i++){
-			validLocations.remove(0);
-		}
-		
-		int radius = (int) (grid.length / 2);
-		
-		for (int i = 1; i <= radius; i++){
-			updateValidLocationRings(radius);
-		}
-		
-		for (int i = 0; i < Electrons.size(); i++){
-			Location loc = Electrons.get(i).location();
-			
-			removeLocation(loc);
-			removeLocation(Direction.North(loc));
-			removeLocation(Direction.NorthEast(loc));
-			removeLocation(Direction.SouthEast(loc));
-			removeLocation(Direction.South(loc));
-			removeLocation(Direction.SouthWest(loc));
-			removeLocation(Direction.NorthWest(loc));
-		}
-	}
-	
-	public void removeLocation(Location loc){
-		for (int i = 0; i < Electrons.size(); i++){
-			Location eLoc = Electrons.get(i).location();
-			if (eLoc.equals(loc)){
-				Electrons.remove(i);
-			}
-		}
-	}
-	
-	public void updateValidLocationRings(int d){
-		int a = grid.length;
-		int mX = a / 2 ;
-		int mY = mX;
-		
-		Location currentTile = new Location(mX,mY);
-		
-		for (int i = 0; i < d; i++){
-			currentTile = Direction.SouthWest(currentTile);
-		}
-		
-		validLocations.add(new Location(currentTile.x, currentTile.y));
-		
-		for (int i = 0; i < d; i++){
-			currentTile = Direction.SouthEast(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
-		}
-		
-		for (int i = 0; i < d; i++){
-			currentTile = Direction.NorthEast(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
-		}
-		
-		for (int i = 0; i < d; i++){
-			currentTile = Direction.North(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
-		}
-		
-		for (int i = 0; i < d; i++){
-			currentTile = Direction.NorthWest(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
-		}
-		
-		for (int i = 0; i < d; i++){
-			currentTile = Direction.SouthWest(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
-		}
-		
-		for (int i = 0; i < d - 1; i++){
-			currentTile = Direction.South(currentTile);
-			validLocations.add(new Location(currentTile.x, currentTile.y));
+			allLocations.add(new Location(currentTile.x, currentTile.y));
 		}
 	}
 	
@@ -188,7 +165,11 @@ public class HexEnv extends JFrame implements Environment {
         int [] xBorder = borderCoordinates[0];
         int [] yBorder = borderCoordinates[1];
         
-		grid[tile.x][tile.y] = new JLayeredPane() {
+        //updateGrid();
+        this.remove(grid[tile.y][tile.x]);
+        //this.repaint();
+		grid[tile.y][tile.x] = new JLayeredPane() {
+
 			@Override                                    
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -201,18 +182,19 @@ public class HexEnv extends JFrame implements Environment {
                 g.fillPolygon(xBorder, yBorder, 6);	
 			}
 		};
-		
+
 		//sets JLayeredPane to be transparent
-		grid[tile.x][tile.y].setOpaque(false);
+		grid[tile.y][tile.x].setOpaque(false);
         
         //Determines placement of Hexagon based on column
         if (tile.x % 2 != 0) {
-        	grid[tile.x][tile.y].setBounds((HEX_WIDTH * 3 / 4 ) * tile.x, (HEX_HEIGHT / 2) + HEX_HEIGHT * tile.y, HEX_WIDTH, HEX_HEIGHT);
+        	grid[tile.y][tile.x].setBounds((HEX_WIDTH * 3 / 4 ) * tile.x, (HEX_HEIGHT / 2) + HEX_HEIGHT * tile.y, HEX_WIDTH, HEX_HEIGHT);
         } else {
-        	grid[tile.x][tile.y].setBounds((HEX_WIDTH * 3 / 4 ) * tile.x, HEX_HEIGHT * tile.y, HEX_WIDTH, HEX_HEIGHT);
+        	grid[tile.y][tile.x].setBounds((HEX_WIDTH * 3 / 4 ) * tile.x, HEX_HEIGHT * tile.y, HEX_WIDTH, HEX_HEIGHT);
         }
         
-        grid[tile.x][tile.y].repaint();
+        add(grid[tile.y][tile.x]);
+        grid[tile.y][tile.x].repaint();
 	}
 	
 	public void createNucleus(){
@@ -230,7 +212,12 @@ public class HexEnv extends JFrame implements Environment {
         int [] yBorder = borderCoordinates[1];
 		
 		JLayeredPane d = new JLayeredPane() {
-            @Override
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 //draws hexagon to be outline
@@ -269,56 +256,20 @@ public class HexEnv extends JFrame implements Environment {
 		for (int i = 0; i < VerticleDiameter; i++){
 			for (int k = 0; k < VerticleDiameter; k++) {
 		        grid[i][k] = new JLayeredPane();
-		        /*
-		        //sets JLayeredPane to be transparent
-		        grid[i][k].setOpaque(false);
-		        
-		        //Determines placement of Hexagon based on column
-		        if (k % 2 != 0) {
-		        	grid[i][k].setBounds((HEX_WIDTH * 3 / 4 ) * k, (HEX_HEIGHT / 2) + HEX_HEIGHT * i, HEX_WIDTH, HEX_HEIGHT);
-		        } else {
-		        	grid[i][k].setBounds((HEX_WIDTH * 3 / 4 ) * k, HEX_HEIGHT * i, HEX_WIDTH, HEX_HEIGHT);
-		        }
-		        
-		        grid[i][k].repaint();
-		        */
 			}
 		}
-	}
-	
-	public void step() {
-
-		
-		for (int i = 0; i < Electrons.size(); i++){
-			
-			int idx = (int) (Math.random() * validLocations.size());
-			Location loc = validLocations.get(idx);
-			validLocations.remove(idx);
-			
-		this.placeElectron(loc.x, loc.y);
-		
-		}
-
-		try {
-			TimeUnit.MILLISECONDS.sleep(1000);
-		} catch (InterruptedException e) {
-
-		}
-		updateGrid();
-		
-		try {
-			TimeUnit.MILLISECONDS.sleep(1000);
-		} catch (InterruptedException e) {
-
-		}
-		refreshDisplay();
 	}
 	
 	public void placeElectron(int x, int y){
 		
 		// Creates new JLabel to represent locatable
         JLabel Electron = new JLabel() {
-        	// Draw green label with white border
+        	/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			// Draw green label with white border
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -386,7 +337,6 @@ public class HexEnv extends JFrame implements Environment {
     }
 
 	public void updateGrid() {
-
 		int a = grid.length;
 		for (int i = 0; i < a; i++){
 			for (int k = 0; k < a; k++) {
@@ -412,12 +362,15 @@ public class HexEnv extends JFrame implements Environment {
 
 	@Override
 	public boolean isValid(Location loc) {
-		// TODO Auto-generated method stub
+		
+
 		boolean validity = false;
-		for (int i = 0; i < validLocations.size(); i++){
-			if (loc.x != validLocations.get(i).x || loc.y != validLocations.get(i).y){	
+		
+		for (int i = 0; i < allLocations.size(); i++){
+			if (loc.x != allLocations.get(i).x || loc.y != allLocations.get(i).y){	
 			}
 		}
+		
 		return validity;
 	}
 
@@ -526,14 +479,17 @@ public class HexEnv extends JFrame implements Environment {
 	@Override
 	public void add(Locatable obj) {
 		// TODO Auto-generated method stub
-		Electrons.add((Electron) obj);
+		Electrons.add(new Electron(this));
+		updateGrid();
 		
 	}
 
 	@Override
 	public void remove(Locatable obj) {
 		// TODO Auto-generated method stub
-		Electrons.remove(obj);
+		Electrons.get(0).theEnv = null;
+		Electrons.remove(0);
+		updateGrid();
 	}
 
 	@Override

@@ -7,7 +7,7 @@ public class Electron implements Locatable
 	private static int nextAvailableID = 1; // next avail unique identifier
 
 
-	private HexEnv theEnv; // environment in which the fish lives
+	public HexEnv theEnv; // environment in which the fish lives
 
 	private int myId; // unique ID for this fish
 
@@ -27,11 +27,11 @@ public class Electron implements Locatable
 	public Electron(HexEnv env)
 
 	{
-		ArrayList<Location> possibleTiles = new ArrayList();
+		ArrayList<Location> validLocations = env.validLocations();
 		Location loc = new Location(0, 0);
 
-		int validLocationsIdx = (int) (Math.random() * env.validLocations.size());
-		Location nextLocation = env.validLocations.get(validLocationsIdx);
+		int validLocationsIdx = (int) (Math.random() * validLocations.size());
+		Location nextLocation = validLocations.get(validLocationsIdx);
 		
 
 		initialize(env, nextLocation);
@@ -51,6 +51,8 @@ public class Electron implements Locatable
 		myLoc = loc;
 
 		theEnv.Electrons.add(this);
+		
+		theEnv.placeElectron(loc.x, loc.y);
 
 	}
 
@@ -137,13 +139,14 @@ public class Electron implements Locatable
 	protected Location nextLocation()
 
 	{
-		ArrayList<Location> possibleTiles = new ArrayList();
+		ArrayList<Location> validLocations = theEnv.validLocations();
 		Location loc = new Location(0, 0);
 
-		if (theEnv.validLocations.size() != 0) {
-			int validLocationsIdx = (int) (Math.random() * theEnv.validLocations.size());
-			Location nextLocation = theEnv.validLocations.get(validLocationsIdx);
+		if (validLocations.size() != 0) {
+			int validLocationsIdx = (int) (Math.random() * validLocations.size());
+			Location nextLocation = validLocations.get(validLocationsIdx);
 			return nextLocation;
+			
 		} else {
 			return myLoc;	
 		}
@@ -181,17 +184,17 @@ public class Electron implements Locatable
 
 	{
 
-		// Change location and notify the environment.
 
 		Location oldLoc = location();
 		
 		theEnv.colorTile(oldLoc);
 
 		myLoc = newLoc;
+		
+		theEnv.placeElectron(newLoc.x, newLoc.y);
 
 		environment().recordMove(this, oldLoc);
 
-		// object is again at location myLoc in environment
 
 	}
 
